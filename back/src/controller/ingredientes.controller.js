@@ -37,13 +37,13 @@ const getAllIngredients = async (req, res) => {
 
   try {
     const [resultadosTotal] = await db.query(sqlTotal, paramsTotal);
-    const totalElementos = resultadosTotal[0].total;
+    const numeroIngredientes = resultadosTotal[0].total;
 
-    const [resultados] = await db.query(sql, params);
+    const [ingredientes] = await db.query(sql, params);
 
     res.json({
-      resultados,
-      totalElementos,
+      ingredientes,
+      numeroIngredientes,
       paginaActual: pagina,
       totalPaginas: Math.ceil(totalElementos / limite)
     });
