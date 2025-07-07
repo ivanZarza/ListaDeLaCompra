@@ -45,7 +45,7 @@ const getAllIngredients = async (req, res) => {
       ingredientes,
       numeroIngredientes,
       paginaActual: pagina,
-      totalPaginas: Math.ceil(totalElementos / limite)
+      totalPaginas: Math.ceil(numeroIngredientes / limite)
     });
   } catch (error) {
     res.status(500).json({ error: 'Error interno del servidor' });
