@@ -1,6 +1,6 @@
 const db = require('../db/conection');
 
-const getAllIngredients = async (req, res) => {
+const getIngredientes = async (req, res) => {
   const nombre = req.query.nombre;
   const tipo = req.query.tipo;
 
@@ -52,4 +52,4 @@ const getAllIngredients = async (req, res) => {
   }
 };
 
-module.exports = { getAllIngredients };
+module.exports = { getIngredientes };

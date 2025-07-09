@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser')
 /* const verificarToken = require('./helpers/authMiddleware') */
 
 const ingredientesRouter = require('./routes/ingredientes.router');
+const tiposRouter = require('./routes/tipos.router');
 
 // Configuración de CORS para permitir cualquier origen y aceptar credencialeshttp://localhost:3000/api/listadelacompra/ingredientes
 const corsOptions = {
@@ -26,18 +27,18 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use(require('./login/registro'))
-app.use(require('./login/login'))
-app.use(require('./ingredientes/tipos'))
+/* app.use(require('./login/registro'))
+app.use(require('./login/login')) */
+app.use('/api/listadelacompra', tiposRouter);
 app.use('/api/listadelacompra', ingredientesRouter);
-app.use(require('./recetas/recetas'))
+/* app.use(require('./recetas/recetas')) */
 
 
 /* app.use(verificarToken) */
-app.use(require('./usuario/me'))
+/* app.use(require('./usuario/me'))
 app.use(require('./usuario/meDatos'))
 app.use(require('./usuario/meRecetas'))
-app.use(require('./usuario/meIngredientes'))
+app.use(require('./usuario/meIngredientes')) */
 
 
 
