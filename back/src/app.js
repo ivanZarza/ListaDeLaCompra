@@ -2,8 +2,9 @@ require('dotenv').config(); // Cargar variables de entorno
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const cookieParser = require('cookie-parser')
-/* const verificarToken = require('./helpers/authMiddleware') */
+const session = require('express-session');
+const sessionMiddleware = require('./helpers/middlewareExpressSession'); // Importar middleware de sesión
+
 
 const ingredientesRouter = require('./routes/ingredientes.router');
 const tiposRouter = require('./routes/tipos.router');
@@ -16,7 +17,9 @@ const corsOptions = {
 	credentials: true, // Permitir credenciales
 };
 
-app.use(cors(corsOptions), express.json(), cookieParser())
+app.use(sessionMiddleware);
+
+app.use(cors(corsOptions), express.json())
 
 app.use((req, res, next) => {
 	console.log("Peticion recibida del cliente");
