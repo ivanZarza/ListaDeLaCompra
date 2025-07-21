@@ -1,8 +1,9 @@
+const bcrypt = require('bcrypt');
 const db = require('../db/conection');  
 
 const postRegistro = async (req, res) => {
   const { nombre, apellidos, email, contraseña } = req.body;
-  if (!nombre || !apellidos || email || !contraseña) {
+  if (!nombre || !apellidos || !email || !contraseña) {
     return res.status(400).json({ error: 'Faltan datos obligatorios' });
   }
   try {
@@ -24,3 +25,5 @@ const postRegistro = async (req, res) => {
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
 }
+
+module.exports = { postRegistro };

@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const db = require('../db/conection');
 
 const postLogin = async (req, res) => {
@@ -33,3 +34,5 @@ const postLogin = async (req, res) => {
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
 }
+
+module.exports = { postLogin };
