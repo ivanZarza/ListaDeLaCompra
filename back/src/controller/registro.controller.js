@@ -7,7 +7,6 @@ const postRegistro = async (req, res) => {
     return res.status(400).json({ error: 'Faltan datos obligatorios' });
   }
   try {
-    // Comprobar si el usuario ya existe
     const sqlComprobar = 'SELECT * FROM usuarios WHERE email = ?';
     const [resultados] = await db.query(sqlComprobar, [email]);
     if (resultados.length > 0) {
