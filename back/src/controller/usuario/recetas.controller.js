@@ -188,7 +188,6 @@ const putReceta = async (req, res) => {
       }
     }
 
-    // 4. Eliminar pasos que ya no están en el body
     const [pasosBD] = await db.query(
       'SELECT id FROM pasos_por_receta WHERE receta_id = ? AND usuario_id = ?',
       [recetaId, usuarioId]
@@ -203,7 +202,6 @@ const putReceta = async (req, res) => {
       );
     }
 
-    // 5. Actualizar o insertar pasos
     for (const paso of pasos) {
       if (paso.id) {
         await db.query(
