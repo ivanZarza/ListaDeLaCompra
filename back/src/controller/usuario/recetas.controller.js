@@ -1,6 +1,5 @@
 const db = require('../db/conection');
 
-// Obtener recetas del usuario
 const getRecetas = async (req, res) => {
   const usuarioId = req.session.id;
 
@@ -22,7 +21,6 @@ const getRecetas = async (req, res) => {
   }
 };
 
-// Obtener detalles de una receta
 const getDetallesReceta = async (req, res) => {
   const { recetaId } = req.params;
 
@@ -31,21 +29,17 @@ const getDetallesReceta = async (req, res) => {
   }
 
   const sqlIngredientes = 'SELECT * FROM ingredientes_por_receta WHERE receta_id = ?';
-
   const sqlPasos = 'SELECT * FROM pasos_por_receta WHERE receta_id = ?';
 
   try {
     const [ingredientes] = await db.query(sqlIngredientes, [recetaId]);
-
     if (ingredientes.length === 0) {
       return res.status(404).json({ error: 'No se encontraron ingredientes para esta receta' });
     }
     const [pasos] = await db.query(sqlPasos, [recetaId]);
-    
     if (pasos.length === 0) {
       return res.status(404).json({ error: 'No se encontraron pasos para esta receta' });
-    } 
-    
+    }
     return res.status(200).json({ ingredientes, pasos });
   } catch (error) {
     console.error(error);
@@ -109,12 +103,10 @@ const deleteReceta = async (req, res) => {
   }
 
   try {
-
     const [resultPasos] = await db.query(
       'DELETE FROM pasos_por_receta WHERE receta_id = ? AND usuario_id = ?',
       [recetaId, usuarioId]
     );
-
     if (resultPasos.affectedRows === 0) {
       return res.status(404).json({ error: 'No se encontraron pasos para esta receta' });
     }
@@ -123,7 +115,6 @@ const deleteReceta = async (req, res) => {
       'DELETE FROM ingredientes_por_receta WHERE receta_id = ? AND usuario_id = ?',
       [recetaId, usuarioId]
     );
-
     if (resultIngredientes.affectedRows === 0) {
       return res.status(404).json({ error: 'No se encontraron ingredientes para esta receta' });
     }
@@ -132,10 +123,9 @@ const deleteReceta = async (req, res) => {
       'DELETE FROM recetas WHERE id = ? AND usuario_id = ?',
       [recetaId, usuarioId]
     );
-
     if (resultReceta.affectedRows === 0) {
       return res.status(404).json({ error: 'Receta no encontrada o no tienes permiso para eliminarla' });
-    } 
+    }
 
     return res.status(200).json({ mensaje: 'Receta y datos asociados eliminados correctamente' });
   } catch (error) {
@@ -198,8 +188,22 @@ const putReceta = async (req, res) => {
       }
     }
 
-    // 4. (Opcional) Haz lo mismo para los pasos si quieres permitir borrado/añadido
+    // 4. Eliminar pasos que ya no están en el body
+    const [pasosBD] = await db.query(
+      'SELECT id FROM pasos_por_receta WHERE receta_id = ? AND usuario_id = ?',
+      [recetaId, usuarioId]
+    );
+    const idsPasosBD = pasosBD.map(p => p.id);
+    const idsPasosBody = pasos.filter(p => p.id).map(p => p.id);
+    const idsPasosAEliminar = idsPasosBD.filter(id => !idsPasosBody.includes(id));
+    if (idsPasosAEliminar.length > 0) {
+      await db.query(
+        `DELETE FROM pasos_por_receta WHERE id IN (${idsPasosAEliminar.map(() => '?').join(',')}) AND receta_id = ? AND usuario_id = ?`,
+        [...idsPasosAEliminar, recetaId, usuarioId]
+      );
+    }
 
+    // 5. Actualizar o insertar pasos
     for (const paso of pasos) {
       if (paso.id) {
         await db.query(
