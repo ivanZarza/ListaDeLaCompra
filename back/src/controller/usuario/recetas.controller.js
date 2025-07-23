@@ -147,7 +147,6 @@ const putReceta = async (req, res) => {
   }
 
   try {
-    // 1. Actualizar receta
     const [resultReceta] = await db.query(
       'UPDATE recetas SET nombre = ?, descripcion = ? WHERE id = ? AND usuario_id = ?',
       [nombre, descripcion, recetaId, usuarioId]
@@ -156,7 +155,6 @@ const putReceta = async (req, res) => {
       return res.status(404).json({ error: 'Receta no encontrada o no tienes permiso para editarla' });
     }
 
-    // 2. Eliminar ingredientes que ya no están en el body
     const [ingredientesBD] = await db.query(
       'SELECT id FROM ingredientes_por_receta WHERE receta_id = ? AND usuario_id = ?',
       [recetaId, usuarioId]
@@ -171,16 +169,13 @@ const putReceta = async (req, res) => {
       );
     }
 
-    // 3. Actualizar o insertar ingredientes
     for (const ing of ingredientes) {
       if (ing.id) {
-        // Actualizar existente
         await db.query(
           'UPDATE ingredientes_por_receta SET ingrediente_id = ?, peso = ? WHERE id = ? AND receta_id = ? AND usuario_id = ?',
           [ing.ingrediente_id, ing.peso, ing.id, recetaId, usuarioId]
         );
       } else {
-        // Insertar nuevo
         await db.query(
           'INSERT INTO ingredientes_por_receta (receta_id, ingrediente_id, peso, usuario_id) VALUES (?, ?, ?, ?)',
           [recetaId, ing.ingrediente_id, ing.peso, usuarioId]
