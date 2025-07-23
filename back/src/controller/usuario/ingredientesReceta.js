@@ -26,7 +26,7 @@ const postIngredienteReceta = async (req, res) => {
     return res.status(401).json({ error: 'No estás autenticado' });
   }
 
-  if (!recetaId || !ingredienteId || !peso) {
+  if (!recetaId || !ingredienteId || !peso) { 
     return res.status(400).json({ error: 'Faltan datos obligatorios'
     });
   }
