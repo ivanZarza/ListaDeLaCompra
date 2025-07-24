@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 	console.log("URL: " + req.url);
 	console.log("Metodo: " + req.method);
 	console.log("User-agent: " + req.headers["user-agent"]);
-	// console.log("Headers", req.headers);
+	console.log("Headers", req.headers);
 	next();
 });
 
