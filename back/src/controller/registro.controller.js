@@ -13,7 +13,7 @@ const postRegistro = async (req, res) => {
       return res.status(400).json({ error: 'El usuario ya existe' });
     }
     const contraseñaHasheada = await bcrypt.hash(contraseña, 10); 
-    const sql = 'INSERT INTO usuarios (nombre, apellidos, email, contraseña) VALUES (?, ?, ?, ?)';
+    const sql = 'INSERT INTO usuarios (id, nombre, apellidos, email, contraseña) VALUES (UUID(), ?, ?, ?, ?)';
     const [result] = await db.query(sql, [nombre, apellidos, email, contraseñaHasheada]);
     if (result.affectedRows === 0) {
       return res.status(500).json({ error: 'Error al registrar el usuario' });
@@ -21,7 +21,7 @@ const postRegistro = async (req, res) => {
     return res.status(201).json({ id: result.insertId, mensaje: 'Usuario registrado correctamente' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Error interno del servidor' });
+    return res.status(500).json({ error: 'Error interno del servidor' }); 
   }
 }
 

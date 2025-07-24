@@ -19,4 +19,4 @@ const postLogout = async (req, res) => {
   }
 };
 
-module.exports = postLogout;
+module.exports = { postLogout };

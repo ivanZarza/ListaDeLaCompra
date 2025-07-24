@@ -9,7 +9,8 @@ const ingredientesRouter = require('./routes/ingredientes.router');
 const tiposRouter = require('./routes/tipos.router');
 const registroRouter = require('./routes/registro.router');
 const loginRouter = require('./routes/login.router');
-const logoutController = require('./controller/logout.controller');
+const logoutRouter = require('./routes/logout.router');
+const datosUsuarioRouter = require('./routes/usuario/datosUsuario.router');
 const recetasUsuarioRouter = require('./routes/usuario/recetas.router');
 const ingredientesUsuarioRecetaRouter = require('./routes/usuario/ingredientesReceta.router');
 const pasosUsuarioRecetaRouter = require('./routes/usuario/pasosReceta.router');
@@ -37,19 +38,20 @@ app.use((req, res, next) => {
 
 app.use('/api/listadelacompra', registroRouter);
 app.use('/api/listadelacompra', loginRouter);
-app.use('/api/listadelacompra', logoutController.postLogout);
+app.use('/api/listadelacompra', logoutRouter);
 app.use('/api/listadelacompra', tiposRouter);
 app.use('/api/listadelacompra', ingredientesRouter);
-app.use('/api/listadelacompra/usuario/recetas', recetasUsuarioRouter);
-app.use('/api/listadelacompra/usuario/ingredientes', ingredientesUsuarioRecetaRouter);
-app.use('/api/listadelacompra/usuario/pasos', pasosUsuarioRecetaRouter);
+app.use('/api/listadelacompra', datosUsuarioRouter);
+app.use('/api/listadelacompra', recetasUsuarioRouter);
+app.use('/api/listadelacompra', ingredientesUsuarioRecetaRouter);
+app.use('/api/listadelacompra', pasosUsuarioRecetaRouter);
 
 
 
 
 
 
-app.get('/api/listadelacompra', (req, res) => {
+app.get('/api/listadelacompra', (req, res) => {	
 	res.send('¡Bienvenido a la API de tu lista de la compra!')
 })
 

@@ -11,8 +11,6 @@ const {
   SESSION_SECRET
 } = process.env;
 
-console.log(`Cargando variables de entorno: DB_HOST=${DB_HOST}, DB_NAME=${DB_NAME}, DB_PORT=${DB_PORT}, DB_USER=${DB_USER}, SESSION_SECRET=${SESSION_SECRET}`);
-
 
 if (!SESSION_SECRET) {
   console.log('La clave de sesión no está definida en las variables de entorno');

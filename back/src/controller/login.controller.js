@@ -19,7 +19,17 @@ const postLogin = async (req, res) => {
     if (!contraseñaValidada) {
       return res.status(401).json({ error: 'Contraseña incorrecta' });
     }
-
+    console.log('Inicio de sesión exitoso:', usuario);
+    req.session.id_user = usuario.id;
+    req.session.nombre = usuario.nombre;
+    req.session.apellidos = usuario.apellidos;
+    req.session.email = usuario.email;
+    req.session.save((err) => {
+      if (err) {
+        console.error('Error al guardar la sesión:', err);
+        return res.status(500).json({ error: 'Error interno del servidor' });
+      }
+    });
     return res.status(200).json({
       usuario: {
         id: usuario.id,

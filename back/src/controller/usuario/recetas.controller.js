@@ -57,7 +57,7 @@ const postReceta = async (req, res) => {
     return res.status(400).json({ error: 'Faltan datos obligatorios' });
   }
 
-  const sqlReceta = 'INSERT INTO recetas (usuario_id, nombre, descripcion) VALUES (?, ?, ?)';
+  const sqlReceta = 'INSERT INTO recetas (id,usuario_id, nombre, descripcion) VALUES (?,?, ?, ?)';
   try {
     const [result] = await db.query(sqlReceta, [usuarioId, nombre, descripcion]);
     return res.status(201).json({ id: result.insertId, mensaje: 'Receta creada correctamente' });

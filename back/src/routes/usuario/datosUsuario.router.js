@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-const datosUsuarioController = require('../controller/usuario/datosUsuario.controller');
+const datosUsuarioController = require('../../controller/usuario/datosUsuario.controller');
 const verificarSesion = require('../../helpers/verificarSesion');
 
 router.get('/datosUsuario', verificarSesion, datosUsuarioController.getDatosUsuario);
