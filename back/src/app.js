@@ -8,6 +8,12 @@ const sessionMiddleware = require('./helpers/middlewareExpressSession'); // Impo
 
 const ingredientesRouter = require('./routes/ingredientes.router');
 const tiposRouter = require('./routes/tipos.router');
+const registroRouter = require('./routes/registro.router');
+const loginRouter = require('./routes/login.router');
+const logoutController = require('./controller/logout.controller');
+const recetasUsuarioRouter = require('./routes/usuario/recetas.router');
+const ingredientesUsuarioRecetaRouter = require('./routes/usuario/ingredientesReceta.router');
+const pasosUsuarioRecetaRouter = require('./routes/usuario/pasosReceta.router');
 
 // Configuración de CORS para permitir cualquier origen y aceptar credencialeshttp://localhost:3000/api/listadelacompra/ingredientes
 const corsOptions = {
@@ -30,18 +36,17 @@ app.use((req, res, next) => {
 	next();
 });
 
-/* app.use(require('./login/registro'))
-app.use(require('./login/login')) */
+app.use('/api/listadelacompra/registro', registroRouter);
+app.use('/api/listadelacompra/login', loginRouter);
+app.use('/api/listadelacompra/logout', logoutController.postLogout);
 app.use('/api/listadelacompra', tiposRouter);
 app.use('/api/listadelacompra', ingredientesRouter);
-/* app.use(require('./recetas/recetas')) */
+app.use('/api/listadelacompra/usuario/recetas', recetasUsuarioRouter);
+app.use('/api/listadelacompra/usuario/ingredientes', ingredientesUsuarioRecetaRouter);
+app.use('/api/listadelacompra/usuario/pasos', pasosUsuarioRecetaRouter);
 
 
-/* app.use(verificarToken) */
-/* app.use(require('./usuario/me'))
-app.use(require('./usuario/meDatos'))
-app.use(require('./usuario/meRecetas'))
-app.use(require('./usuario/meIngredientes')) */
+
 
 
 
