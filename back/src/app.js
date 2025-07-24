@@ -2,7 +2,6 @@ require('dotenv').config(); // Cargar variables de entorno
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const session = require('express-session');
 const sessionMiddleware = require('./helpers/middlewareExpressSession'); // Importar middleware de sesión
 
 
