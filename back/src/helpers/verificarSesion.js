@@ -1,4 +1,4 @@
-const { pool } = require('../database');
+const { pool } = require('../db/conection');
 
 async function verificarSesion(req, res, next) {
   console.log('Comprobando sesión:', req.session);

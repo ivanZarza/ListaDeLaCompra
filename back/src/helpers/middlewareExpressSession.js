@@ -2,7 +2,7 @@ require('dotenv').config();
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 
-const { DB_HOST, DB_NAME, DB_PORT,DB_PASSWORD,DB_USER } = require('../database');
+const { DB_HOST, DB_NAME, DB_PORT,DB_PASSWORD,DB_USER } = require('../db/conection');
 
 const claveJWT = process.env.claveJWT
 if (!claveJWT) {
@@ -25,7 +25,7 @@ const sessionStore = new MySQLStore({
 
 const sessionMiddleware = session({
   key: 'session_cookie',
-  secret:process.env.claveJWT,
+  secret:process.env.JWT_SECRET,
   store: sessionStore,
   proxy: true,
   resave: false,
