@@ -19,6 +19,29 @@ const getIngredientesRecetas = async (req, res) => {
   }
 };
 
+getUnIngredienteReceta = async (req, res) => {
+  const { ingredienteId } = req.params;
+  const usuarioId = req.session.id;
+  if (!usuarioId) {
+    return res.status(401).json({ error: 'No estás autenticado' });
+  }   
+  if (!ingredienteId) {
+    return res.status(400).json({ error: 'Falta el ID del ingrediente'
+    });
+  }
+  const sql = 'SELECT * FROM ingredientes_por_receta WHERE id = ? AND usuario_id = ?';
+  try {
+    const [ingrediente] = await db.query(sql, [ingredienteId, usuarioId]);
+    if (ingrediente.length === 0) {
+      return res.status(404).json({ error: 'Ingrediente no encontrado o no tienes permiso para verlo' });
+    }
+    return res.status(200).json(ingrediente[0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};    
+
 const postIngredienteReceta = async (req, res) => {
   const { recetaId, ingredienteId, peso } = req.body;
   const usuarioId = req.session.id;
@@ -39,6 +62,32 @@ const postIngredienteReceta = async (req, res) => {
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
+
+const putIngredienteReceta = async (req, res) => {
+  const { ingredienteId, peso } = req.body;
+  const usuarioId = req.session.id;
+
+  if (!usuarioId) {
+    return res.status(401).json({ error: 'No estás autenticado' });
+  }
+
+  if (!ingredienteId || !peso) {
+    return res.status(400).json({ error: 'Faltan datos obligatorios' });
+  }
+
+  const sql = 'UPDATE ingredientes_por_receta SET peso = ? WHERE id = ? AND usuario_id = ?';
+  try {
+    const [result] = await db.query(sql, [peso, ingredienteId, usuarioId]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Ingrediente no encontrado o no tienes permiso para actualizarlo' });
+    }
+    return res.status(200).json({ mensaje: 'Ingrediente actualizado correctamente' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 
 const deleteIngredienteReceta = async (req, res) => {
   const { ingredienteId } = req.params;
@@ -68,5 +117,8 @@ const deleteIngredienteReceta = async (req, res) => {
 
 module.exports = {
   getIngredientesRecetas,
+  getUnIngredienteReceta,
+  postIngredienteReceta,
+  putIngredienteReceta,
   deleteIngredienteReceta
 };
