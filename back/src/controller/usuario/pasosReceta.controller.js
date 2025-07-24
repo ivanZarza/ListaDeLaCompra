@@ -20,18 +20,18 @@ const getPasosRecetas = async (req, res) => {
 };
 
 const getUnPasoReceta = async (req, res) => {
-  const { pasoId } = req.params;
+  const { id } = req.params;
   const usuarioId = req.session.id;
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
   }
-  if (!pasoId) {
+  if (!id) {
     return res.status(400).json({ error: 'Falta el ID del paso' });
   }
   
   const sql = 'SELECT * FROM pasos_por_receta WHERE id = ? AND usuario_id = ?';
   try {
-    const [paso] = await db.query(sql, [pasoId, usuarioId]);
+    const [paso] = await db.query(sql, [id, usuarioId]);
     if (paso.length === 0) {
       return res.status(404).json({ error: 'Paso no encontrado o no tienes permiso para verlo' });
     }
@@ -63,20 +63,20 @@ const postPasoReceta = async (req, res) => {
 };
 
 const putPasoReceta = async (req, res) => {
-  const { pasoId } = req.params;
+  const { id } = req.params;
   const { recetaId, elaboracion, imagen } = req.body;
   const usuarioId = req.session.id;
 
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
   }
-  if (!pasoId || !recetaId || !elaboracion || !imagen) {
+  if (!id || !recetaId || !elaboracion || !imagen) {
     return res.status(400).json({ error: 'Faltan datos obligatorios' });
   }
 
   const sql = 'UPDATE pasos_por_receta SET receta_id = ?, elaboracion = ?, imagen = ? WHERE id = ? AND usuario_id = ?';
   try {
-    const [result] = await db.query(sql, [recetaId, elaboracion, imagen, pasoId, usuarioId]);
+    const [result] = await db.query(sql, [recetaId, elaboracion, imagen, id, usuarioId]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'Paso no encontrado o no tienes permiso para editarlo' });
     }
@@ -88,18 +88,18 @@ const putPasoReceta = async (req, res) => {
 };
 
 const deletePasoReceta = async (req, res) => {
-  const { pasoId } = req.params;
+  const { id } = req.params;
   const usuarioId = req.session.id;
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
   }
-  if (!pasoId) {
+  if (!id) {
     return res.status(400).json({ error: 'Falta el ID del paso' });
   }
 
   const sql = 'DELETE FROM pasos_por_receta WHERE id = ? AND usuario_id = ?';
   try {
-    const [result] = await db.query(sql, [pasoId, usuarioId]);
+    const [result] = await db.query(sql, [id, usuarioId]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'Paso no encontrado o no tienes permiso para eliminarlo' });
     }

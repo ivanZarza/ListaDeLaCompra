@@ -22,9 +22,9 @@ const getRecetas = async (req, res) => {
 };
 
 const getDetallesReceta = async (req, res) => {
-  const { recetaId } = req.params;
+  const { id } = req.params;
 
-  if (!recetaId) {
+  if (!id) {
     return res.status(400).json({ error: 'Falta el ID de la receta' });
   }
 
@@ -32,11 +32,11 @@ const getDetallesReceta = async (req, res) => {
   const sqlPasos = 'SELECT * FROM pasos_por_receta WHERE receta_id = ?';
 
   try {
-    const [ingredientes] = await db.query(sqlIngredientes, [recetaId]);
+    const [ingredientes] = await db.query(sqlIngredientes, [id]);
     if (ingredientes.length === 0) {
       return res.status(404).json({ error: 'No se encontraron ingredientes para esta receta' });
     }
-    const [pasos] = await db.query(sqlPasos, [recetaId]);
+    const [pasos] = await db.query(sqlPasos, [id]);
     if (pasos.length === 0) {
       return res.status(404).json({ error: 'No se encontraron pasos para esta receta' });
     }
@@ -68,21 +68,21 @@ const postReceta = async (req, res) => {
 };
 
 const putReceta = async (req, res) => {
-  const { recetaId } = req.params;
+  const { id } = req.params;
   const usuarioId = req.session.id;
   const { nombre, descripcion } = req.body;
 
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
   }
-  if (!recetaId || !nombre || !descripcion) {
+  if (!id || !nombre || !descripcion) {
     return res.status(400).json({ error: 'Faltan datos obligatorios' });
   }
 
   try {
     const [resultReceta] = await db.query(
       'UPDATE recetas SET nombre = ?, descripcion = ? WHERE id = ? AND usuario_id = ?',
-      [nombre, descripcion, recetaId, usuarioId]
+      [nombre, descripcion, id, usuarioId]
     );
     if (resultReceta.affectedRows === 0) {
       return res.status(404).json({ error: 'Receta no encontrada o no tienes permiso para editarla' });
@@ -95,20 +95,20 @@ const putReceta = async (req, res) => {
 };
 
 const deleteReceta = async (req, res) => {
-  const { recetaId } = req.params;
+  const { id } = req.params;
   const usuarioId = req.session.id;
 
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
   }
-  if (!recetaId) {
+  if (!id) {
     return res.status(400).json({ error: 'Falta el ID de la receta' });
   }
 
   try {
     const [resultReceta] = await db.query(
       'DELETE FROM recetas WHERE id = ? AND usuario_id = ?',
-      [recetaId, usuarioId]
+      [id, usuarioId]
     );
     if (resultReceta.affectedRows === 0) {
       return res.status(404).json({ error: 'Receta no encontrada o no tienes permiso para eliminarla' });
