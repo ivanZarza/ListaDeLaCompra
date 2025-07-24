@@ -1,6 +1,21 @@
 const bcrypt = require('bcrypt');
 const db = require('../db/conection');
 
+const getDatosUsuario = async (req, res) => {
+  const usuarioId = req.session.id;
+
+  try {
+    const [usuarios] = await db.query('SELECT nombre, apellidos, email FROM usuarios WHERE id = ?', [usuarioId]);
+    if (usuarios.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    return res.status(200).json(usuarios[0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 const putDatosUsuario = async (req, res) => {
   const { nombre, apellidos, email, contraseñaActual, nuevaContraseña } = req.body;
   const usuarioId = req.session.id;
@@ -35,4 +50,20 @@ const putDatosUsuario = async (req, res) => {
   }
 };
 
-module.exports = { putDatosUsuario };
+const deleteDatosUsuario = async (req, res) => {
+  const usuarioId = req.session.id;
+  
+  try {
+    const [result] = await db.query('DELETE FROM usuarios WHERE id = ?', [usuarioId]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    req.session.destroy();
+    return res.status(200).json({ mensaje: 'Usuario eliminado correctamente' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+module.exports = { getDatosUsuario, putDatosUsuario, deleteDatosUsuario };
