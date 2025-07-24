@@ -3,7 +3,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const sessionMiddleware = require('./helpers/middlewareExpressSession'); // Importar middleware de sesión
-
+console.log(sessionMiddleware);
 
 const ingredientesRouter = require('./routes/ingredientes.router');
 const tiposRouter = require('./routes/tipos.router');
@@ -35,9 +35,9 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use('/api/listadelacompra/registro', registroRouter);
-app.use('/api/listadelacompra/login', loginRouter);
-app.use('/api/listadelacompra/logout', logoutController.postLogout);
+app.use('/api/listadelacompra', registroRouter);
+app.use('/api/listadelacompra', loginRouter);
+app.use('/api/listadelacompra', logoutController.postLogout);
 app.use('/api/listadelacompra', tiposRouter);
 app.use('/api/listadelacompra', ingredientesRouter);
 app.use('/api/listadelacompra/usuario/recetas', recetasUsuarioRouter);

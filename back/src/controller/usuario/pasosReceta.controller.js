@@ -111,7 +111,7 @@ const deletePasoReceta = async (req, res) => {
 };
 
 module.exports = {
-  getPasosReceta,
+  getPasosRecetas,
   getUnPasoReceta,
   postPasoReceta,
   putPasoReceta,
