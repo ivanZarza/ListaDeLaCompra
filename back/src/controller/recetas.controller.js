@@ -7,7 +7,7 @@ const getRecetas = async (req, res) => {
     return res.status(401).json({ error: 'No estás autenticado' });
   }
 
-  const sql = 'SELECT * FROM recetas WHERE usuario_id = ?';
+  const sql = 'SELECT id, nombre, descripcion, created_at FROM recetas WHERE usuario_id = ?';
 
   try {
     const [recetas] = await db.query(sql, [usuarioId]);
@@ -75,7 +75,8 @@ const putReceta = async (req, res) => {
   const { id } = req.params;
   const usuarioId = req.session.usuarioId;
   const { nombre, descripcion } = req.body;
-
+console.log(`ID de usuario: ${usuarioId} linea 50 recetas.controller.js`); // Debugging line to check user ID
+console.log(`ID de receta: ${id} linea 51 recetas.controller.js`); // Debugging line to check recipe ID
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
   }
