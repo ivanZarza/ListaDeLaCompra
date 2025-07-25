@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const db = require('../db/conection');
 
 const getDatosUsuario = async (req, res) => {
-  const usuarioId = req.session.id;
+  const usuarioId = req.session.usuarioId;
 console.log(`ID de usuario: ${usuarioId}`); // Debugging line to check user ID
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });

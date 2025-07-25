@@ -3,7 +3,7 @@ const db = require('../db/conection');
 const getIngredientes = async (req, res) => {
   const nombre = req.query.nombre;
   const tipo = req.query.tipo;
-console.log(`ID de usuario: ${req.session.id}`); // Debugging line to check user ID
+console.log(`ID de usuario: ${req.session.usuarioId}`); // Debugging line to check user ID
   let sqlTotal = 'SELECT COUNT(*) AS total FROM ingredientes WHERE usuarioId IS NULL';
   let paramsTotal = [];
 

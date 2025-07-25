@@ -1,8 +1,8 @@
 const db = require('../db/conection');
 
 const getRecetas = async (req, res) => {
-  const usuarioId = req.session.id;
-
+  const usuarioId = req.session.usuarioId;
+  console.log(`ID de usuario: ${usuarioId} linea 5 recetas.controller.js`); // Debugging line to check user ID
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
   }
@@ -49,7 +49,7 @@ const getDetallesReceta = async (req, res) => {
 
 const postReceta = async (req, res) => {
   const { nombre, descripcion } = req.body;
-  const usuarioId = req.session.id;
+  const usuarioId = req.session.usuarioId;
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
   }
@@ -57,10 +57,14 @@ const postReceta = async (req, res) => {
     return res.status(400).json({ error: 'Faltan datos obligatorios' });
   }
 
-  const sqlReceta = 'INSERT INTO recetas (id,usuario_id, nombre, descripcion) VALUES (?,?, ?, ?)';
+  const sqlReceta = 'INSERT INTO recetas (usuario_id, nombre, descripcion) VALUES (?, ?, ?)';
+  const sqlRecetaId = 'SELECT id FROM recetas WHERE usuario_id = ? AND nombre = ? AND descripcion = ? ORDER BY created_at DESC LIMIT 1'; 
   try {
-    const [result] = await db.query(sqlReceta, [usuarioId, nombre, descripcion]);
-    return res.status(201).json({ id: result.insertId, mensaje: 'Receta creada correctamente' });
+    await db.query(sqlReceta, [usuarioId, nombre, descripcion]);
+    const [resultId] = await db.query(sqlRecetaId, [usuarioId, nombre, descripcion]);
+    const id = resultId[0].id;
+    console.log(`Receta creada con ID: ${id}`);
+    return res.status(201).json({ id, mensaje: 'Receta creada correctamente' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Error interno del servidor' });
@@ -69,7 +73,7 @@ const postReceta = async (req, res) => {
 
 const putReceta = async (req, res) => {
   const { id } = req.params;
-  const usuarioId = req.session.id;
+  const usuarioId = req.session.usuarioId;
   const { nombre, descripcion } = req.body;
 
   if (!usuarioId) {
@@ -96,7 +100,7 @@ const putReceta = async (req, res) => {
 
 const deleteReceta = async (req, res) => {
   const { id } = req.params;
-  const usuarioId = req.session.id;
+  const usuarioId = req.session.usuarioId;
 
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });

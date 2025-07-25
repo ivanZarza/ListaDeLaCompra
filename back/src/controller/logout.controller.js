@@ -1,8 +1,7 @@
-const db = require('../db/conection');
 
 const postLogout = async (req, res) => {
   try {
-    if (req.session && req.session.id_user) {
+    if (req.session && req.session.usuarioId) {
       req.session.destroy((err) => {
         if (err) {
           console.error('Error al destruir la sesión:', err);

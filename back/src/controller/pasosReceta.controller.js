@@ -1,7 +1,7 @@
 const db = require('../db/conection');
 
 const getPasosRecetas = async (req, res) => {
-  const usuarioId = req.session.id;
+  const usuarioId = req.session.usuarioId;
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
   }

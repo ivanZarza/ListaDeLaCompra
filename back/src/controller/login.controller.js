@@ -15,12 +15,13 @@ const postLogin = async (req, res) => {
       return res.status(401).json({ error: 'El usuario no existe' });
     }
     const usuario = resultados[0]
+    console.log(`ID de usuario: ${usuario.id} linea 18 login.controller.js`); // Debugging line to check user ID
     const contraseñaValidada = await bcrypt.compare(contraseña, usuario.contraseña);
     if (!contraseñaValidada) {
       return res.status(401).json({ error: 'Contraseña incorrecta' });
     }
     console.log('Inicio de sesión exitoso:', usuario);
-    req.session.id = usuario.id;
+    req.session.usuarioId = usuario.id;
     req.session.nombre = usuario.nombre;
     req.session.apellidos = usuario.apellidos;
     req.session.email = usuario.email;
