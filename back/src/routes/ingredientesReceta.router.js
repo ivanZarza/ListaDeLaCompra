@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
-const ingredientesRecetaController = require('../../controller/usuario/ingredientesReceta.controller');
-const verificarSesion = require('../../helpers/verificarSesion');
+const ingredientesRecetaController = require('../controller/ingredientesReceta.controller');
+const verificarSesion = require('../helpers/verificarSesion');
 
 router.get('/usuario/ingredientes', verificarSesion, ingredientesRecetaController.getIngredientesRecetas);
 router.get('/usuario/ingredientes/:id', verificarSesion, ingredientesRecetaController.getUnIngredienteReceta);

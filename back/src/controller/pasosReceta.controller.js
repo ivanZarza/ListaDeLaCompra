@@ -1,4 +1,4 @@
-const db = require('../../db/conection');
+const db = require('../db/conection');
 
 const getPasosRecetas = async (req, res) => {
   const usuarioId = req.session.id;

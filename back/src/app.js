@@ -10,10 +10,10 @@ const tiposRouter = require('./routes/tipos.router');
 const registroRouter = require('./routes/registro.router');
 const loginRouter = require('./routes/login.router');
 const logoutRouter = require('./routes/logout.router');
-const datosUsuarioRouter = require('./routes/usuario/datosUsuario.router');
-const recetasUsuarioRouter = require('./routes/usuario/recetas.router');
-const ingredientesUsuarioRecetaRouter = require('./routes/usuario/ingredientesReceta.router');
-const pasosUsuarioRecetaRouter = require('./routes/usuario/pasosReceta.router');
+const datosUsuarioRouter = require('./routes/datosUsuario.router');
+const recetasUsuarioRouter = require('./routes/recetas.router');
+const ingredientesUsuarioRecetaRouter = require('./routes/ingredientesReceta.router');
+const pasosUsuarioRecetaRouter = require('./routes/pasosReceta.router');
 
 // Configuración de CORS para permitir cualquier origen y aceptar credencialeshttp://localhost:3000/api/listadelacompra/ingredientes
 const corsOptions = {
