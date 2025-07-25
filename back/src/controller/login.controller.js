@@ -20,7 +20,7 @@ const postLogin = async (req, res) => {
       return res.status(401).json({ error: 'Contraseña incorrecta' });
     }
     console.log('Inicio de sesión exitoso:', usuario);
-    req.session.id_user = usuario.id;
+    req.session.id = usuario.id;
     req.session.nombre = usuario.nombre;
     req.session.apellidos = usuario.apellidos;
     req.session.email = usuario.email;
