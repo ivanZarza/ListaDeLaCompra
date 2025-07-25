@@ -1,10 +1,10 @@
-const { pool } = require('../db/conection');
+const db = require('../db/conection');
 
 async function verificarSesion(req, res, next) {
   console.log('Comprobando sesión:', req.session);
-  if (req.session && req.session.id_user) {
-    console.log('Sesión encontrada para el usuario:', req.session.id_user);
-    const [user] = await pool.query('SELECT * FROM user WHERE id_user = ?', [req.session.id_user]);
+  if (req.session && req.session.id) {
+    console.log('Sesión encontrada para el usuario:', req.session.id);
+    const [user] = await db.query('SELECT * FROM usuarios WHERE id = ?', [req.session.id]);
     if (user.length === 0) {
       console.log('Usuario de la sesión no existe');
       req.session.destroy(() => {});

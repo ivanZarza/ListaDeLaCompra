@@ -3,7 +3,10 @@ const db = require('../db/conection');
 
 const getDatosUsuario = async (req, res) => {
   const usuarioId = req.session.id;
-
+console.log(`ID de usuario: ${usuarioId}`); // Debugging line to check user ID
+  if (!usuarioId) {
+    return res.status(401).json({ error: 'No estás autenticado' });
+  }
   try {
     const [usuarios] = await db.query('SELECT nombre, apellidos, email FROM usuarios WHERE id = ?', [usuarioId]);
     if (usuarios.length === 0) {
