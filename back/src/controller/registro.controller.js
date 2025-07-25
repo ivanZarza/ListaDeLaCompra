@@ -18,7 +18,7 @@ const postRegistro = async (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(500).json({ error: 'Error al registrar el usuario' });
     }
-    return res.status(201).json({ id: result.insertId, mensaje: 'Usuario registrado correctamente' });
+    return res.status(201).json({  mensaje: 'Usuario registrado correctamente' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Error interno del servidor' }); 
