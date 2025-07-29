@@ -1,6 +1,6 @@
 const db = require('../db/conection');
 
-const getIngredientesRecetas = async (req, res) => { 
+const getIngredientesRecetaPorUsuario = async (req, res) => { 
   const usuarioId = req.session.usuarioId;
   console.log(`linea 5 ID de usuario: ${usuarioId}`);
   if (!usuarioId) {
@@ -20,9 +20,31 @@ const getIngredientesRecetas = async (req, res) => {
   }
 };
 
+const getIngredientesPorReceta = async (req, res) => {
+  const { recetaId } = req.params;
+  const usuarioId = req.session.usuarioId;
+  if (!usuarioId) {
+    return res.status(401).json({ error: 'No estás autenticado' });
+  }
+  if (!recetaId) {
+    return res.status(400).json({ error: 'Falta el ID de la receta' });
+  }
+  const sql = 'SELECT * FROM ingredientes_por_receta WHERE receta_id = ? AND usuario_id = ?';
+  try {
+    const [ingredientes] = await db.query(sql, [recetaId, usuarioId]);
+    if (ingredientes.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron ingredientes para esta receta' });
+    }
+    return res.status(200).json(ingredientes);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 const getUnIngredienteReceta = async (req, res) => {
   const { id } = req.params; // <-- Cambiado a 'id'
-  const usuarioId = req.session.id;
+  const usuarioId = req.session.usuarioId;
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
   }   
@@ -44,7 +66,9 @@ const getUnIngredienteReceta = async (req, res) => {
 
 const postIngredienteReceta = async (req, res) => {
   const { recetaId, ingredienteId, peso } = req.body;
-  const usuarioId = req.session.id;
+  const usuarioId = req.session.usuarioId;
+    console.log(`Receta ID: ${recetaId}, Ingrediente ID: ${ingredienteId}, Peso: ${peso}, Usuario ID: ${usuarioId}`);
+
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
   }
@@ -62,10 +86,41 @@ const postIngredienteReceta = async (req, res) => {
   }
 };
 
+const postVariosIngredientesReceta = async (req, res) => {
+  const { ingredientes } = req.body;
+  const usuarioId = req.session.usuarioId;
+
+  if (!usuarioId) {
+    return res.status(401).json({ error: 'No estás autenticado' });
+  }
+
+  if (!Array.isArray(ingredientes) || ingredientes.length === 0) {
+    return res.status(400).json({ error: 'Faltan datos obligatorios' });
+  }
+
+  const sql = 'INSERT INTO ingredientes_por_receta (receta_id, ingrediente_id, peso, usuario_id) VALUES (?, ?, ?, ?)';
+  const connection = await db.getConnection();
+  try {
+    await connection.beginTransaction();
+    for (const ingrediente of ingredientes) {
+      const { recetaId, ingredienteId, peso } = ingrediente;
+      await connection.query(sql, [recetaId, ingredienteId, peso, usuarioId]);
+    }
+    await connection.commit();
+    return res.status(201).json({ mensaje: 'Ingredientes agregados correctamente' });
+  } catch (error) {
+    await connection.rollback();
+    console.error(error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  } finally {
+    connection.release();
+  }
+};
+
 const putIngredienteReceta = async (req, res) => {
-  const { id } = req.params; // <-- Cambiado a 'id'
+  const { id } = req.params; 
   const { peso } = req.body;
-  const usuarioId = req.session.id;
+  const usuarioId = req.session.usuarioId;
 
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
@@ -90,7 +145,7 @@ const putIngredienteReceta = async (req, res) => {
 
 const deleteIngredienteReceta = async (req, res) => {
   const { id } = req.params; // <-- Cambiado a 'id'
-  const usuarioId = req.session.id;
+  const usuarioId = req.session.usuarioId;
 
   if (!usuarioId) {
     return res.status(401).json({ error: 'No estás autenticado' });
@@ -114,9 +169,11 @@ const deleteIngredienteReceta = async (req, res) => {
 };
 
 module.exports = {
-  getIngredientesRecetas,
+  getIngredientesRecetaPorUsuario,
+  getIngredientesPorReceta,
   getUnIngredienteReceta,
   postIngredienteReceta,
+  postVariosIngredientesReceta,
   putIngredienteReceta,
   deleteIngredienteReceta
 };

@@ -21,7 +21,7 @@ console.log(`ID de usuario: ${usuarioId}`); // Debugging line to check user ID
 
 const putDatosUsuario = async (req, res) => {
   const { nombre, apellidos, email, contraseñaActual, nuevaContraseña } = req.body;
-  const usuarioId = req.session.id;
+  const usuarioId = req.session.usuarioId;
 
   if (!nombre || !apellidos || !email || !contraseñaActual || !nuevaContraseña) {
     return res.status(400).json({ error: 'Faltan datos obligatorios' });
@@ -54,7 +54,7 @@ const putDatosUsuario = async (req, res) => {
 };
 
 const deleteDatosUsuario = async (req, res) => {
-  const usuarioId = req.session.id;
+  const usuarioId = req.session.usuarioId;
   
   try {
     const [result] = await db.query('DELETE FROM usuarios WHERE id = ?', [usuarioId]);
