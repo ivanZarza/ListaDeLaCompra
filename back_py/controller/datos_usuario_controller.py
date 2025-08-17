@@ -9,8 +9,8 @@ from db.conexion import get_connection  # Importa la función para conectar a la
 
 
 def get_datos_usuario(usuario_id):
-    conn = get_connection()  # Obtiene la conexión a la base de datos
-    cursor = conn.cursor(dictionary=True)  # Crea el cursor; dictionary=True devuelve los resultados como diccionarios (en JS: array de objetos)
+    db = get_connection()  # Obtiene la conexión a la base de datos
+    cursor = db.cursor(dictionary=True)  # Crea el cursor; dictionary=True devuelve los resultados como diccionarios (en JS: array de objetos)
     try:
         # %s es el marcador de posición en mysql.connector (en JS con mysql2 se usa ?)
         cursor.execute("SELECT nombre, apellidos, email FROM usuarios WHERE id = %s", (usuario_id,))
@@ -23,14 +23,14 @@ def get_datos_usuario(usuario_id):
         return {"error": "Error interno del servidor"}, 500  # En JS: res.status(500).json({ error: ... })
     finally:
         cursor.close()  # Cierra el cursor (buena práctica)
-        conn.close()    # Cierra la conexión (en JS el pool gestiona las conexiones)
+        db.close()    # Cierra la conexión (en JS el pool gestiona las conexiones)
 
 # Actualizar datos del usuario
 
 
 def put_datos_usuario(usuario_id, nombre, apellidos, email, contrasena_actual, nueva_contrasena):
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    db = get_connection()
+    cursor = db.cursor(dictionary=True)
     try:
         cursor.execute("SELECT contraseña FROM usuarios WHERE id = %s", (usuario_id,))  # Consulta la contraseña actual
         usuario = cursor.fetchone()  # Obtiene la fila (en JS: [usuarios] = await db.query(...))
@@ -53,14 +53,14 @@ def put_datos_usuario(usuario_id, nombre, apellidos, email, contrasena_actual, n
         return {"error": "Error interno del servidor"}, 500
     finally:
         cursor.close()
-        conn.close()
+        db.close()
 
 # Eliminar usuario
 
 
 def delete_datos_usuario(usuario_id):
-    conn = get_connection()
-    cursor = conn.cursor()
+    db = get_connection()
+    cursor = db.cursor()
     try:
         # Elimina el usuario por ID (en JS: await db.query(...))
         cursor.execute("DELETE FROM usuarios WHERE id = %s", (usuario_id,))
@@ -73,4 +73,4 @@ def delete_datos_usuario(usuario_id):
         return {"error": "Error interno del servidor"}, 500
     finally:
         cursor.close()  # Cierra el cursor
-        conn.close()    # Cierra la conexión
+        db.close()    # Cierra la conexión

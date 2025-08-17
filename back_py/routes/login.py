@@ -21,3 +21,4 @@ def login():
         session['usuario_id'] = respuesta['usuario']['id']  # En JS: req.session.usuarioId = ...
     # Se devuelve directamente el usuario en la respuesta, no hace falta otra petición
     return respuesta, status  # En JS: res.status(...).json(...)
+ 
