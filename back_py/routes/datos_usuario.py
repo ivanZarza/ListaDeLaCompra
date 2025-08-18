@@ -31,21 +31,27 @@ def obtener_usuario():
     return respuesta, status  # En JS: res.status(...).json(...)
 
 # Ruta PUT para actualizar datos de usuario
-@datos_usuario_bp.route('/usuario/<int:usuario_id>', methods=['PUT'])
-def actualizar_usuario(usuario_id):
+@datos_usuario_bp.route('/usuario', methods=['PUT'])
+def actualizar_usuario():
+    usuario_id = session.get('usuario_id')  # Obtiene el usuario_id de la sesión
+    if not usuario_id:
+        return {"error": "No hay usuario logueado"}, 401
     datos = request.get_json()  # Obtiene los datos enviados por el cliente (en JS: req.body)
     nombre = datos.get('nombre')
     apellidos = datos.get('apellidos')
     email = datos.get('email')
-    contrasena_actual = datos.get('contrasena_actual')
-    nueva_contrasena = datos.get('nueva_contrasena')
     # Llama al controlador con los datos extraídos
-    respuesta, status = put_datos_usuario(usuario_id, nombre, apellidos, email, contrasena_actual, nueva_contrasena)
+    contraseña_actual = datos.get('contraseña_actual')
+    nueva_contraseña = datos.get('nueva_contraseña')
+    respuesta, status = put_datos_usuario(usuario_id, nombre, apellidos, email, contraseña_actual, nueva_contraseña)
     return respuesta, status
 
 # Ruta DELETE para eliminar usuario
-@datos_usuario_bp.route('/usuario/<int:usuario_id>', methods=['DELETE'])
-def eliminar_usuario(usuario_id):
+@datos_usuario_bp.route('/usuario', methods=['DELETE'])
+def eliminar_usuario():
+    usuario_id = session.get('usuario_id')  # Obtiene el usuario_id de la sesión
+    if not usuario_id:
+        return {"error": "No hay usuario logueado"}, 401
     # Llama al controlador y devuelve la respuesta
     respuesta, status = delete_datos_usuario(usuario_id)
     return respuesta, status

@@ -3,7 +3,7 @@
 
 **Pregunta:** ¿Por qué en Python (Flask) los controladores reciben parámetros directamente y en JavaScript (Express) suelen recibir `req` y `res`?
 **Respuesta:**
-En Flask, los controladores suelen recibir solo los parámetros relevantes (por ejemplo, `email`, `contrasena`) porque la extracción de datos del request se realiza en la ruta y se pasan como argumentos. Esto hace que el código sea más limpio y fácil de testear. En Express, los controladores reciben los objetos `req` y `res` para tener acceso completo a la petición y la respuesta, lo que puede ser útil pero menos modular y más difícil de testear.
+En Flask, los controladores suelen recibir solo los parámetros relevantes (por ejemplo, `email`, `contraseña`) porque la extracción de datos del request se realiza en la ruta y se pasan como argumentos. Esto hace que el código sea más limpio y fácil de testear. En Express, los controladores reciben los objetos `req` y `res` para tener acceso completo a la petición y la respuesta, lo que puede ser útil pero menos modular y más difícil de testear.
 
 **1. ¿Los if tienen diferente forma de declararse que en JS?**
 - Sí. En Python:

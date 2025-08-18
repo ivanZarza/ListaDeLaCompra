@@ -84,7 +84,6 @@
 
 ## 19. ¿Cómo funciona la línea ingrediente_dict = dict(zip([desc[0] for desc in cursor.description], ingrediente))?
 
-## 20. ¿Por qué se usa db y get_db() en vez de conn y get_connection()?
 ## 20. ¿Por qué se usa siempre db y get_connection() en todos los controladores?
  Para mantener coherencia y legibilidad en todo el proyecto, se recomienda usar siempre la variable `db` y la función `get_connection()` en todos los controladores Python.
  Así, el código es más fácil de entender y mantener, y se evita confusión entre diferentes nombres.

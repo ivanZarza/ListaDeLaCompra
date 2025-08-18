@@ -16,21 +16,12 @@ def get_pasos_receta_por_usuario():
     sql = "SELECT * FROM pasos_por_receta WHERE usuario_id = %s"
     try:
         db = get_connection()
-        cursor = db.cursor()
+        cursor = db.cursor(dictionary=True)
         cursor.execute(sql, (usuario_id,))
-        pasos = cursor.fetchall()
-        print(f"Tuplas recibidas de la consulta: {pasos}")  # Muestra cómo se reciben los datos antes de convertirlos
-        if not pasos:
+        pasos_list = cursor.fetchall()  # Ya es una lista de diccionarios
+        print(f"Pasos recibidos: {pasos_list}")
+        if not pasos_list:
             return {'mensaje': 'No se encontraron pasos para este usuario'}, 404
-        # Conversión detallada:
-        # [desc[0] for desc in cursor.description] obtiene los nombres de las columnas de la consulta SQL.
-        # Cada elemento 'p' en 'pasos' es una tupla con los valores de cada columna.
-        # zip(...) une cada nombre de columna con su valor correspondiente en la tupla.
-        # dict(zip(...)) crea un diccionario donde las claves son los nombres de columna y los valores son los datos de la tupla.
-        # Así, cada paso queda como {'columna': valor, ...} y el frontend recibe una lista de diccionarios.
-        # Ejemplo: Si la consulta devuelve [('Cortar', 'imagen1.png'), ('Mezclar', 'imagen2.png')] y las columnas son ['elaboracion', 'imagen'], el resultado será:
-        # [{'elaboracion': 'Cortar', 'imagen': 'imagen1.png'}, {'elaboracion': 'Mezclar', 'imagen': 'imagen2.png'}]
-        pasos_list = [dict(zip([desc[0] for desc in cursor.description], p)) for p in pasos]
         return pasos_list, 200
     except Exception as e:
         print(e)
@@ -48,13 +39,11 @@ def get_pasos_receta_por_receta(receta_id):
     sql = "SELECT * FROM pasos_por_receta WHERE receta_id = %s AND usuario_id = %s"
     try:
         db = get_connection()
-        cursor = db.cursor()
+        cursor = db.cursor(dictionary=True)
         cursor.execute(sql, (receta_id, usuario_id))
-        pasos = cursor.fetchall()
-        if not pasos:
+        pasos_list = cursor.fetchall()
+        if not pasos_list:
             return {'mensaje': 'No se encontraron pasos para esta receta'}, 404
-        # Conversión detallada igual que en la función anterior.
-        pasos_list = [dict(zip([desc[0] for desc in cursor.description], p)) for p in pasos]
         return pasos_list, 200
     except Exception as e:
         print(e)
@@ -72,14 +61,11 @@ def get_un_paso_receta(id):
     sql = "SELECT * FROM pasos_por_receta WHERE id = %s AND usuario_id = %s"
     try:
         db = get_connection()
-        cursor = db.cursor()
+        cursor = db.cursor(dictionary=True)
         cursor.execute(sql, (id, usuario_id))
-        paso = cursor.fetchone()
-        if not paso:
+        paso_dict = cursor.fetchone()  # Ya es un diccionario
+        if not paso_dict:
             return {'error': 'Paso no encontrado o no tienes permiso para verlo'}, 404
-        # Convierte la tupla resultado en un diccionario, asociando cada nombre de columna con su valor.
-        # Así el frontend recibe un objeto con claves y valores, no una tupla.
-        paso_dict = dict(zip([desc[0] for desc in cursor.description], paso))
         return paso_dict, 200
     except Exception as e:
         print(e)

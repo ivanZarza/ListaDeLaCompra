@@ -18,8 +18,8 @@ login_bp = Blueprint('login', __name__)
 def login():
     datos = request.get_json()
     email = datos.get('email')
-    contrasena = datos.get('contrasena')
-    respuesta, status = post_login(email, contrasena)
+    contraseña = datos.get('contraseña')
+    respuesta, status = post_login(email, contraseña)
     return respuesta, status
 ```
 
@@ -92,7 +92,7 @@ En JS (con mysql2): el pool gestiona las conexiones automáticamente, normalment
 
 **9. ¿Por qué en Python (Flask) los controladores reciben parámetros directamente y en JavaScript (Express) suelen recibir `req` y `res`?**
 **Respuesta:**
-En Flask, los controladores suelen recibir solo los parámetros relevantes (por ejemplo, `email`, `contrasena`) porque la extracción de datos del request se realiza en la ruta y se pasan como argumentos. Esto hace que el código sea más limpio y fácil de testear. En Express, los controladores reciben los objetos `req` y `res` para tener acceso completo a la petición y la respuesta, lo que puede ser útil pero menos modular y más difícil de testear.
+En Flask, los controladores suelen recibir solo los parámetros relevantes (por ejemplo, `email`, `contraseña`) porque la extracción de datos del request se realiza en la ruta y se pasan como argumentos. Esto hace que el código sea más limpio y fácil de testear. En Express, los controladores reciben los objetos `req` y `res` para tener acceso completo a la petición y la respuesta, lo que puede ser útil pero menos modular y más difícil de testear.
 
 ---
 
@@ -101,7 +101,7 @@ En Flask, los controladores suelen recibir solo los parámetros relevantes (por 
   ```python
   return {"usuario": {...}, "mensaje": "Inicio de sesión exitoso"}, 200
   ```
-- En la ruta, se reciben así: `respuesta, status = post_login(email, contrasena)`
+- En la ruta, se reciben así: `respuesta, status = post_login(email, contraseña)`
 - En JS, se hace con: `res.status(200).json({...})`
 - Esto permite separar claramente los datos y el código de estado en Python.
 

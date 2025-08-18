@@ -7,9 +7,9 @@ from db.conexion import get_connection  # Importa la función para conectar a la
 from flask import session  # Importa el objeto session de Flask
 
 
-def post_registro(nombre, apellidos, email, contrasena):
+def post_registro(nombre, apellidos, email, contraseña):
     # Verifica que todos los datos obligatorios estén presentes (en JS: req.body)
-    if not nombre or not apellidos or not email or not contrasena:
+    if not nombre or not apellidos or not email or not contraseña:
         return {
             "error": "Faltan datos obligatorios"
         }, 400  # En JS: res.status(400).json(...)
@@ -27,13 +27,13 @@ def post_registro(nombre, apellidos, email, contrasena):
             return {"error": "El usuario ya existe"}, 400
 
         # Hashea la contraseña (en JS: await bcrypt.hash(...))
-        contrasena_hasheada = bcrypt.hashpw(
-            contrasena.encode(), bcrypt.gensalt()
+        contraseña_hasheada = bcrypt.hashpw(
+            contraseña.encode(), bcrypt.gensalt()
         ).decode()
 
         # Inserta el usuario (en JS: INSERT INTO ... VALUES (UUID(), ?, ?, ?, ?))
         sql = "INSERT INTO usuarios (id, nombre, apellidos, email, contraseña) VALUES (UUID(), %s, %s, %s, %s)"
-        cursor.execute(sql, (nombre, apellidos, email, contrasena_hasheada))
+        cursor.execute(sql, (nombre, apellidos, email, contraseña_hasheada))
         conn.commit()  # Guarda los cambios en la base de datos
         if cursor.rowcount == 0:  # Verifica si se insertó el usuario (en JS: result.affectedRows)
             return {"error": "Error al registrar el usuario"}, 500

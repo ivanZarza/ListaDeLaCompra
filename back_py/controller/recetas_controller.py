@@ -16,19 +16,12 @@ def get_recetas():
     sql = "SELECT id, nombre, descripcion, created_at FROM recetas WHERE usuario_id = %s"
     try:
         db = get_connection()
-        cursor = db.cursor()
+        cursor = db.cursor(dictionary=True)
         cursor.execute(sql, (usuario_id,))
-        recetas = cursor.fetchall()
-        print(f"Tuplas recibidas de la consulta: {recetas}")  # Muestra cómo se reciben los datos antes de convertirlos
-        if not recetas:
+        recetas_list = cursor.fetchall()  # Ya es una lista de diccionarios
+        print(f"Recetas recibidas: {recetas_list}")
+        if not recetas_list:
             return {'mensaje': 'No se encontraron recetas para este usuario'}, 404
-        # Conversión detallada:
-        # [desc[0] for desc in cursor.description] obtiene los nombres de las columnas de la consulta SQL.
-        # Cada elemento 'r' en 'recetas' es una tupla con los valores de cada columna.
-        # zip(...) une cada nombre de columna con su valor correspondiente en la tupla.
-        # dict(zip(...)) crea un diccionario donde las claves son los nombres de columna y los valores son los datos de la tupla.
-        # Así, cada receta queda como {'columna': valor, ...} y el frontend recibe una lista de diccionarios.
-        recetas_list = [dict(zip([desc[0] for desc in cursor.description], r)) for r in recetas]
         return recetas_list, 200
     except Exception as e:
         print(e)
@@ -44,20 +37,17 @@ def get_detalles_receta(id):
     sql_pasos = "SELECT * FROM pasos_por_receta WHERE receta_id = %s"
     try:
         db = get_connection()
-        cursor = db.cursor()
+        cursor = db.cursor(dictionary=True)
         cursor.execute(sql_ingredientes, (id,))
-        ingredientes = cursor.fetchall()
-        print(f"Tuplas ingredientes: {ingredientes}")
-        if not ingredientes:
+        ingredientes_list = cursor.fetchall()
+        print(f"Ingredientes recibidos: {ingredientes_list}")
+        if not ingredientes_list:
             return {'error': 'No se encontraron ingredientes para esta receta'}, 404
-        # Conversión detallada igual que antes
-        ingredientes_list = [dict(zip([desc[0] for desc in cursor.description], ing)) for ing in ingredientes]
         cursor.execute(sql_pasos, (id,))
-        pasos = cursor.fetchall()
-        print(f"Tuplas pasos: {pasos}")
-        if not pasos:
+        pasos_list = cursor.fetchall()
+        print(f"Pasos recibidos: {pasos_list}")
+        if not pasos_list:
             return {'error': 'No se encontraron pasos para esta receta'}, 404
-        pasos_list = [dict(zip([desc[0] for desc in cursor.description], p)) for p in pasos]
         return {'ingredientes': ingredientes_list, 'pasos': pasos_list}, 200
     except Exception as e:
         print(e)

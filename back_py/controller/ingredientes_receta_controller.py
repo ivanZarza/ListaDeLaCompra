@@ -19,17 +19,12 @@ def get_ingredientes_receta_por_usuario():
     sql = "SELECT * FROM ingredientes_por_receta WHERE usuario_id = %s"
     try:
         db = get_connection()
-        cursor = db.cursor()
+        cursor = db.cursor(dictionary=True)
         cursor.execute(sql, (usuario_id,))
-        ingredientes = cursor.fetchall()
-        print(f"Tuplas recibidas de la consulta: {ingredientes}")  # Muestra cómo se reciben los datos antes de convertirlos
-        if not ingredientes:
+        ingredientes_list = cursor.fetchall()  # Ya es una lista de diccionarios
+        print(f"Ingredientes recibidos: {ingredientes_list}")
+        if not ingredientes_list:
             return {'mensaje': 'No se encontraron ingredientes para este usuario'}, 404
-        # Esta línea convierte cada tupla en un diccionario usando zip y dict:
-        # [desc[0] for desc in cursor.description] obtiene los nombres de las columnas.
-        # dict(zip(...)) une cada nombre de columna con su valor en la tupla.
-        # Así, cada ingrediente queda como {'columna': valor, ...}
-        ingredientes_list = [dict(zip([desc[0] for desc in cursor.description], ing)) for ing in ingredientes]
         return ingredientes_list, 200
     except Exception as e:
         print(e)
@@ -47,13 +42,11 @@ def get_ingredientes_por_receta(receta_id):
     sql = "SELECT * FROM ingredientes_por_receta WHERE receta_id = %s AND usuario_id = %s"
     try:
         db = get_connection()
-        cursor = db.cursor()
+        cursor = db.cursor(dictionary=True)
         cursor.execute(sql, (receta_id, usuario_id))
-        ingredientes = cursor.fetchall()
-        if not ingredientes:
+        ingredientes_list = cursor.fetchall()
+        if not ingredientes_list:
             return {'error': 'No se encontraron ingredientes para esta receta'}, 404
-        # Igual que en la función anterior, convierte las tuplas en diccionarios para facilitar el uso en el frontend.
-        ingredientes_list = [dict(zip([desc[0] for desc in cursor.description], ing)) for ing in ingredientes]
         return ingredientes_list, 200
     except Exception as e:
         print(e)
@@ -71,13 +64,11 @@ def get_un_ingrediente_receta(id):
     sql = "SELECT * FROM ingredientes_por_receta WHERE id = %s AND usuario_id = %s"
     try:
         db = get_connection()
-        cursor = db.cursor()
+        cursor = db.cursor(dictionary=True)
         cursor.execute(sql, (id, usuario_id))
-        ingrediente = cursor.fetchone()
-        if not ingrediente:
+        ingrediente_dict = cursor.fetchone()  # Ya es un diccionario
+        if not ingrediente_dict:
             return {'error': 'Ingrediente no encontrado o no tienes permiso para verlo'}, 404
-        # Convierte la tupla resultado en un diccionario, asociando cada nombre de columna con su valor.
-        ingrediente_dict = dict(zip([desc[0] for desc in cursor.description], ingrediente))
         return ingrediente_dict, 200
     except Exception as e:
         print(e)

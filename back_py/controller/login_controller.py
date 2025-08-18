@@ -6,9 +6,9 @@ import bcrypt  # Importa la librería para verificar contraseñas (en JS: requir
 from db.conexion import get_connection  # Importa la función para conectar a la base de datos (en JS: require('../db/conection'))
 from flask import session  # Importa el objeto session de Flask
 
-def post_login(email, contrasena):
+def post_login(email, contraseña):
     # Verifica que todos los datos obligatorios estén presentes (en JS: req.body)
-    if not email or not contrasena:
+    if not email or not contraseña:
         return {"error": "Faltan datos obligatorios"}, 400  # En JS: res.status(400).json(...)
 
     conn = get_connection()  # Obtiene la conexión a la base de datos
@@ -25,8 +25,8 @@ def post_login(email, contrasena):
         print(f"ID de usuario: {usuario['id']} línea login.controller.py")  # Debug
 
         # Verifica la contraseña usando bcrypt (en JS: await bcrypt.compare(...))
-        contrasena_validada = bcrypt.checkpw(contrasena.encode(), usuario["contraseña"].encode())
-        if not contrasena_validada:
+        contraseña_validada = bcrypt.checkpw(contraseña.encode(), usuario["contraseña"].encode())
+        if not contraseña_validada:
             return {"error": "Contraseña incorrecta"}, 401  # En JS: res.status(401).json(...)
 
         print("Inicio de sesión exitoso:", usuario)  # Debug

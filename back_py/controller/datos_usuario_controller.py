@@ -28,7 +28,7 @@ def get_datos_usuario(usuario_id):
 # Actualizar datos del usuario
 
 
-def put_datos_usuario(usuario_id, nombre, apellidos, email, contrasena_actual, nueva_contrasena):
+def put_datos_usuario(usuario_id, nombre, apellidos, email, contraseña_actual, nueva_contraseña):
     db = get_connection()
     cursor = db.cursor(dictionary=True)
     try:
@@ -37,14 +37,14 @@ def put_datos_usuario(usuario_id, nombre, apellidos, email, contrasena_actual, n
         if not usuario:
             return {"error": "Usuario no encontrado"}, 404
         # Verifica la contraseña actual usando bcrypt (en JS: await bcrypt.compare(...))
-        if not bcrypt.checkpw(contrasena_actual.encode(), usuario["contraseña"].encode()):
+        if not bcrypt.checkpw(contraseña_actual.encode(), usuario["contraseña"].encode()):
             return {"error": "Contraseña actual incorrecta"}, 401
         # Hashea la nueva contraseña (en JS: await bcrypt.hash(...))
-        contrasena_hasheada = bcrypt.hashpw(nueva_contrasena.encode(), bcrypt.gensalt()).decode()
+        contraseña_hasheada = bcrypt.hashpw(nueva_contraseña.encode(), bcrypt.gensalt()).decode()
         # %s como marcador de posición (en JS: ?)
         sql = "UPDATE usuarios SET nombre = %s, apellidos = %s, email = %s, contraseña = %s WHERE id = %s"
-        cursor.execute(sql, (nombre, apellidos, email, contrasena_hasheada, usuario_id))
-        conn.commit()  # Guarda los cambios en la base de datos
+        cursor.execute(sql, (nombre, apellidos, email, contraseña_hasheada, usuario_id))
+        db.commit()  # Guarda los cambios en la base de datos
         if cursor.rowcount == 0:  # Verifica si se actualizó algún usuario (en JS: result.affectedRows)
             return {"error": "Usuario no encontrado"}, 404
         return {"mensaje": "Datos de usuario actualizados correctamente"}, 200
@@ -64,7 +64,7 @@ def delete_datos_usuario(usuario_id):
     try:
         # Elimina el usuario por ID (en JS: await db.query(...))
         cursor.execute("DELETE FROM usuarios WHERE id = %s", (usuario_id,))
-        conn.commit()
+        db.commit()
         if cursor.rowcount == 0:  # Verifica si se eliminó algún usuario (en JS: result.affectedRows)
             return {"error": "Usuario no encontrado"}, 404
         return {"mensaje": "Usuario eliminado correctamente"}, 200
