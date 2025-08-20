@@ -60,14 +60,42 @@ Diferencia con JS: arrays usan `.push()`, objetos usan punto/corchetes.
 ---
 
 ### 4. Controladores y lógica de negocio
-- Usar siempre la variable `db` y la función `get_connection()` en todos los controladores para coherencia.
-- Cerrar conexiones y cursores tras cada consulta.
-- Confirmar cambios con `db.commit()` y revertir con `db.rollback()` si hay error.
-- Ejemplo de consulta y conversión de tuplas a diccionario:
   ```python
   recetas_list = [dict(zip([desc[0] for desc in cursor.description], r)) for r in recetas]
   ```
 
+#### Preguntas frecuentes sobre controladores:
+
+1. ¿Qué es `dictionary=True`?
+   - Es un argumento del método `cursor()` de `mysql.connector`.
+   - Hace que los resultados de las consultas se devuelvan como diccionarios (clave: nombre de columna, valor: dato), en vez de tuplas.
+   - Ejemplo:
+     - Sin `dictionary=True`: `('Juan', 'Pérez', 'juan@email.com')`
+     - Con `dictionary=True`: `{'nombre': 'Juan', 'apellidos': 'Pérez', 'email': 'juan@email.com'}`
+   - **Diferencia JS:** En Node.js, los resultados suelen ser arrays de objetos, similar a los diccionarios de Python.
+
+2. ¿Qué métodos tiene `cursor`?
+   - Principales:
+     - `execute(sql, params)`: ejecuta una consulta SQL.
+     - `fetchone()`: obtiene el siguiente resultado (una fila).
+     - `fetchall()`: obtiene todas las filas.
+     - `fetchmany(size)`: obtiene varias filas.
+     - `close()`: cierra el cursor.
+     - `rowcount`: número de filas afectadas por la última consulta.
+     - `lastrowid`: id de la última fila insertada.
+     - `callproc(procname, params)`: llama a un procedimiento almacenado.
+   - **Diferencia JS:** En Node.js, el objeto de resultado tiene métodos y propiedades como `affectedRows`, `insertId`, etc.
+
+3. ¿Para qué es `cursor.fetchone()` y qué pasaría si no lo pones?
+   - Obtiene la primera fila del resultado de la consulta.
+   - Si no lo pones, no tendrás acceso a los datos consultados; el cursor solo almacena el resultado, pero no lo extrae.
+   - Si usas `fetchall()`, obtienes todas las filas en una lista.
+   - Si no llamas a ningún método de obtención, no puedes procesar los datos.
+   - **Diferencia JS:** En Node.js, el resultado de la consulta ya es un array de objetos.
+
+4. ¿Por qué en Python (Flask) los controladores reciben parámetros directamente y en JavaScript (Express) suelen recibir `req` y `res`?
+**Respuesta:**
+En Flask, los controladores suelen recibir solo los parámetros relevantes (por ejemplo, `email`, `contraseña`) porque la extracción de datos del request se realiza en la ruta y se pasan como argumentos. Esto hace que el código sea más limpio y fácil de testear. En Express, los controladores reciben los objetos `req` y `res` para tener acceso completo a la petición y la respuesta, lo que puede ser útil pero menos modular y más difícil de testear.
 ---
 
 ### 5. Configuración y arranque de Flask
@@ -84,8 +112,9 @@ Diferencia con JS: arrays usan `.push()`, objetos usan punto/corchetes.
 ### 6. Conexión y pruebas de base de datos
 - Usar dotenv y variables de entorno para credenciales.
 - Conexión directa vs pool de conexiones.
+5. **¿Cómo se gestiona y destruye la sesión en Flask comparado con Express?**
+En Express (Node.js) se usa `req.session` para acceder y destruir la sesión (`req.session.destroy(callback)`), y para verificar si hay sesión activa (`if (req.session && req.session.usuarioId)`). En Flask se usa el objeto global `session`, se destruye con `session.clear()` y se verifica con `if session.get('usuario_id')`. Flask no usa callback, pero se pueden manejar excepciones con try/except.
 - Prueba de conexión: ejecutar `SELECT 1`.
-- Cerrar recursos tras la consulta.
  - Usar siempre `cursor = db.cursor(dictionary=True)` en las consultas que devuelven datos, para obtener listas de diccionarios y evitar bucles de conversión manual.
 
 ---
@@ -234,3 +263,242 @@ Consulta la documentación oficial: https://flask-session.readthedocs.io/en/late
 Este resumen final agrupa y organiza todo el contenido para aprender backend en Python (Flask) desde la perspectiva de Node.js, empezando por los conceptos básicos y avanzando hacia la configuración, modularización, controladores, rutas, base de datos, autenticación y buenas prácticas.
 
 ¿Quieres agregar más preguntas, ejemplos o una sección específica?
+---
+
+**¿Cómo se prueba la conexión a la base de datos y por qué se usa 'SELECT 1'?**
+- En Python: se obtiene la conexión, se crea un cursor y se ejecuta una consulta simple (`SELECT 1`).
+- En JS: se obtiene la conexión y se ejecuta una consulta con `await db.query('SELECT 1')`.
+- 'SELECT 1' es una consulta muy simple que no depende de ninguna tabla y solo verifica que la base de datos responde correctamente.
+
+**¿Cómo se cierran los recursos tras la consulta y qué significa cursor en Python?**
+- En Python: `cursor.close()` y `conn.close()`. El cursor es el objeto que permite ejecutar consultas y leer resultados.
+- En JS: `conn.release()` (si es pool) o `conn.end()`. En JS se usa el resultado de la consulta directamente.
+---
+
+**¿Cómo se accede a los resultados de la consulta en Python?**
+- Se obtiene una lista de tuplas, se puede convertir a lista de diccionarios si se usa `cursor.description`.
+
+**¿Qué hace la línea tipos_list = [{'tipo': t[0]} for t in tipos]?**
+- Utiliza una list comprehension para recorrer la lista de tuplas obtenida de la consulta SQL.
+- Por cada tupla `t` en la lista `tipos`, toma el primer elemento (`t[0]`) y lo coloca en un diccionario con la clave 'tipo'.
+- El resultado es una lista de diccionarios, por ejemplo: si `tipos = [('Fruta',), ('Verdura',)]`, entonces `tipos_list = [{'tipo': 'Fruta'}, {'tipo': 'Verdura'}]`.
+- Esto permite que el frontend reciba los datos en formato JSON, más fácil de consumir que una lista de tuplas.
+
+**¿Cómo funciona el bucle en la línea tipos_list = [{'tipo': t[0]} for t in tipos]?**
+- Se utiliza una list comprehension, que es una forma compacta de crear listas en Python.
+- El bucle interno `for t in tipos` recorre cada elemento de la lista `tipos`.
+- Cada elemento `t` es una tupla, por ejemplo `('Fruta',)`.
+- Por cada tupla, se toma el primer elemento `t[0]` y se crea un diccionario `{'tipo': t[0]}`.
+- El resultado es una lista de diccionarios, uno por cada tipo encontrado en la consulta SQL.
+- Por ejemplo, si `tipos = [('Fruta',), ('Verdura',)]`, el resultado será:
+  `[{'tipo': 'Fruta'}, {'tipo': 'Verdura'}]`
+- Esto facilita el uso en el frontend, ya que cada tipo queda en formato JSON y es más fácil de consumir que una lista de tuplas.
+---
+
+**1. ¿Los if tienen diferente forma de declararse que en JS?**
+- Sí. En Python:
+  ```python
+  if condicion:
+      # código
+  if not condicion:
+      # negación
+  ```
+  En JavaScript:
+  ```javascript
+  if (condicion) {
+    // código
+  }
+  if (!condicion) {
+    // negación
+  }
+  ```
+- En Python no se usan paréntesis ni llaves, sino dos puntos y sangría. La negación se hace con `not` en vez de `!` como en JS.
+
+**3. bcrypt tiene diferente forma de declaración entre Python y JS**
+- Sí. En JS:
+  ```javascript
+  const bcrypt = require('bcrypt');
+  const hash = await bcrypt.hash(password, 10);
+  const valid = await bcrypt.compare(password, hash);
+  ```
+- En Python:
+  ```python
+  import bcrypt
+  hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+  valid = bcrypt.checkpw(password.encode(), hash.encode())
+  ```
+- En Python se usan métodos de clase y hay que codificar/decodificar los strings.
+
+**4. conn.commit() ¿qué es y cuál es la diferencia con JS? ¿Por qué en JS no hay que hacerlo y en Python sí?**
+- `conn.commit()` guarda los cambios realizados en la base de datos (INSERT, UPDATE, DELETE).
+- En JS (con mysql2), los cambios se guardan automáticamente tras ejecutar la consulta.
+- En Python, si no llamas a `commit()`, los cambios no se aplican realmente en la base de datos.
+
+**5. len(resultados): ¿len es un método de arrays o listas en Python? ¿Cuáles más hay?**
+- `len()` es una función que devuelve la longitud de listas, arrays, diccionarios, strings, etc.
+- Ejemplo:
+  ```python
+  lista = [1, 2, 3]
+  print(len(lista))  # 3
+  ```
+- Otros métodos útiles para listas:
+  - `append()`: añade un elemento
+  - `pop()`: elimina y devuelve el último elemento
+  - `remove()`: elimina un elemento por valor
+  - `sort()`: ordena la lista
+  - `reverse()`: invierte la lista
+
+**6. rowcount==0 ¿es las líneas que se vieron afectadas?**
+- Sí. `cursor.rowcount` indica cuántas filas fueron modificadas por la última consulta (INSERT, UPDATE, DELETE).
+- Si es 0, significa que no se insertó, actualizó o eliminó ningún registro.
+- En JS, se usa `result.affectedRows` para lo mismo.
+
+**7. Ejemplos de diferencias de declaración entre Python y JavaScript**
+- Declaración de variables
+  - Python:
+    ```python
+    nombre = "Juan"
+    edad = 30
+    ```
+  - JavaScript:
+    ```javascript
+    let nombre = "Juan";
+    const edad = 30;
+    ```
+- Funciones
+  - Python:
+    ```python
+    def saludar(nombre):
+        print("Hola", nombre)
+    ```
+  - JavaScript:
+    ```javascript
+    function saludar(nombre) {
+      console.log("Hola", nombre);
+    }
+    // O con arrow function:
+    const saludar = nombre => console.log("Hola", nombre);
+    ```
+- Condicionales
+  - Python:
+    ```python
+    if edad > 18:
+        print("Mayor de edad")
+    if not activo:
+        print("No está activo")
+    ```
+  - JavaScript:
+    ```javascript
+    if (edad > 18) {
+      console.log("Mayor de edad");
+    }
+    if (!activo) {
+      console.log("No está activo");
+    }
+    ```
+- Bucles
+  - Python:
+    ```python
+    for i in range(5):
+        print(i)
+    ```
+  - JavaScript:
+    ```javascript
+    for (let i = 0; i < 5; i++) {
+      console.log(i);
+    }
+    ```
+- Listas/Arrays
+  - Python:
+    ```python
+    lista = [1, 2, 3]
+    lista.append(4)
+    ```
+  - JavaScript:
+    ```javascript
+    let lista = [1, 2, 3];
+    lista.push(4);
+    ```
+- Objetos/Diccionarios
+  - Python:
+    ```python
+    persona = {"nombre": "Juan", "edad": 30}
+    print(persona["nombre"])
+    persona["ciudad"] = "Madrid"
+    ```
+  - JavaScript:
+    ```javascript
+    let persona = { nombre: "Juan", edad: 30 };
+    console.log(persona.nombre);
+    persona.ciudad = "Madrid";
+    ```
+- Clases
+  - Python:
+    ```python
+    class Persona:  # Define la clase Persona
+        def __init__(self, nombre, edad):  # Método constructor, se llama al crear el objeto
+            self.nombre = nombre  # Asigna el parámetro nombre al atributo del objeto
+            self.edad = edad      # Asigna el parámetro edad al atributo del objeto
+        def saludar(self):  # Método de la clase para saludar
+            print(f"Hola, soy {self.nombre}")  # Imprime un saludo usando el atributo nombre
+    juan = Persona("Juan", 30)  # Crea una instancia de Persona con nombre "Juan" y edad 30
+    juan.saludar()  # Llama al método saludar de la instancia juan
+    ```
+  - JavaScript:
+    ```javascript
+    class Persona { // Define la clase Persona
+      constructor(nombre, edad) { // Método constructor, se llama al crear el objeto
+        this.nombre = nombre;     // Asigna el parámetro nombre al atributo del objeto
+        this.edad = edad;         // Asigna el parámetro edad al atributo del objeto
+      }
+      saludar() { // Método de la clase para saludar
+        console.log(`Hola, soy ${this.nombre}`); // Imprime un saludo usando el atributo nombre
+      }
+    }
+    const juan = new Persona("Juan", 30); // Crea una instancia de Persona con nombre "Juan" y edad 30
+    juan.saludar(); // Llama al método saludar de la instancia juan
+    ```
+- Importaciones
+  - Python:
+    ```python
+    import math
+    from db.conexion import get_connection
+    ```
+  - JavaScript:
+    ```javascript
+    const math = require('mathjs');
+    const getConnection = require('./db/conection');
+    // O con ES Modules:
+    import math from 'mathjs';
+    import { getConnection } from './db/conection.js';
+    ```
+- Manejo de errores
+  - Python:
+    ```python
+    try:
+        resultado = 10 / 0
+    except Exception as e:
+        print("Error:", e)
+    ```
+  - JavaScript:
+    ```javascript
+    try {
+      let resultado = 10 / 0;
+    } catch (e) {
+      console.log("Error:", e);
+    }
+    ```
+- None vs null
+  - Python:
+    ```python
+    valor = None
+    if valor is None:
+        print("Sin valor")
+    ```
+  - JavaScript:
+    ```javascript
+    let valor = null;
+    if (valor === null) {
+      console.log("Sin valor");
+    }
+    ```
