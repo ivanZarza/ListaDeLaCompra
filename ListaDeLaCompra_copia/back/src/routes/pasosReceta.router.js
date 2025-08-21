@@ -1,0 +1,12 @@
+const { Router } = require('express');
+const router = Router();
+const pasosRecetaController = require('../controller/pasosReceta.controller');
+const verificarSesion = require('../helpers/verificarSesion');
+router.get('/usuario/pasos', verificarSesion, pasosRecetaController.getPasosRecetas);
+router.get('/usuario/pasos/receta/:recetaId', verificarSesion, pasosRecetaController.getPasosRecetasPorReceta);
+router.get('/usuario/pasos/:id', verificarSesion, pasosRecetaController.getUnPasoReceta);
+router.post('/usuario/pasos', verificarSesion, pasosRecetaController.postPasoReceta);
+router.post('/usuario/pasos/varios', verificarSesion, pasosRecetaController.postVariosPasosReceta);
+router.put('/usuario/pasos/:id', verificarSesion, pasosRecetaController.putPasoReceta);
+router.delete('/usuario/pasos/:id', verificarSesion, pasosRecetaController.deletePasoReceta);
+module.exports = router;

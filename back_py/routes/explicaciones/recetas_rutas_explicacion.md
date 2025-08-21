@@ -18,6 +18,12 @@
 ## 5. ¿Cómo se maneja la respuesta del controlador?
 - El controlador devuelve una tupla `(data, status)`.
 - La ruta usa `jsonify(data), status` para enviar la respuesta al frontend.
+Qué hace jsonify y de dónde viene?
+- jsonify es una función de Flask que convierte automáticamente diccionarios y listas de Python en una respuesta JSON válida para el frontend. Además, establece el tipo de contenido (Content-Type: application/json) y gestiona la codificación.
+Se importa desde el propio paquete Flask:
+from flask import jsonify
+- Convierte automáticamente diccionarios y listas de Python en JSON válido para el frontend.
+- Gestiona el tipo de contenido y la codificación.
 
 ## 6. ¿Cómo se convierten las tuplas SQL en diccionarios?
 - El controlador usa `[dict(zip([desc[0] for desc in cursor.description], r)) for r in recetas]` para convertir cada tupla en un diccionario.

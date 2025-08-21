@@ -75,4 +75,29 @@
 
 ---
 
-¿Quieres agregar más preguntas o ejemplos específicos sobre rutas y autenticación en Flask y Express?
+
+---
+
+**¿Cómo se indica la URL del backend en el HTML y cómo se envían los datos del formulario?**
+
+En el HTML, la URL del backend se pone en el atributo `action` del formulario. Por ejemplo:
+
+```html
+<form action="/ruta_del_backend" method="POST">
+  <input type="text" name="nombre">
+  <input type="number" name="edad">
+  <button type="submit">Enviar</button>
+</form>
+```
+
+Si el backend Flask está en otra dirección (por ejemplo, en desarrollo con frontend separado), puedes poner la URL completa:
+
+```html
+<form action="http://localhost:5000/ruta_del_backend" method="POST">
+  <!-- campos del formulario -->
+</form>
+```
+
+Cuando el usuario envía el formulario, el navegador manda los datos directamente a esa URL del backend. Flask los recibe con `request.form` y puede procesarlos en la ruta correspondiente.
+
+No es necesario procesar los datos en el frontend (con JS) a menos que quieras validarlos o enviarlos por AJAX. Si usas un formulario HTML tradicional, los datos se envían sin procesar (como texto plano) mediante una petición POST al servidor.

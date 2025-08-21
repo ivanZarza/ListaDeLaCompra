@@ -10,6 +10,7 @@
 
 **2. ¿Cómo se maneja la paginación en la ruta?**
 - En Flask: se obtiene el parámetro `pagina` y se convierte a entero, con valor por defecto 1.
+  `pagina = int(request.args.get('pagina', 1))`
 - En Express: se obtiene con `Number(req.query.pagina) || 1`.
 
 ---

@@ -13,7 +13,9 @@
 - Se retorna una tupla: `(respuesta, status)`.
 
 ## 5. ¿Qué diferencia hay con Express?
-- En Express se usa `router.post('/logout', handler)`. En Flask se usa Blueprint y decoradores.
+- En Express se usa `router.post('/logout', handler)`.
+ En Flask se usa Blueprint y decoradores `@logout_bp.route('/logout', methods=['POST'])`
+  El símbolo @ en Python se llama "decorador". Sirve para modificar el comportamiento de la función que sigue. En Flask, el decorador @logout_bp.route(...) asocia la función a una URL específica y la convierte en una vista que responde a peticiones HTTP. Así, cuando se recibe una petición en esa ruta, se ejecuta la función decorada.
 
 ## 6. ¿Cómo se importa el controlador en Python y JS?
 - Python: `from controller.logout_controller import post_logout`
