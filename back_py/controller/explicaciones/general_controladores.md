@@ -167,6 +167,13 @@ Este resumen agrupa las preguntas y respuestas más relevantes sobre controlador
 ¿Quieres agregar más preguntas, ejemplos o una sección específica?
 ---
 
+**¿Por qué se pone __name__ en Blueprint y qué significa?**
+El parámetro `__name__` en `Blueprint('nombre', __name__)` no es obligatorio, pero es muy recomendable. Se utiliza para que Flask sepa el nombre del módulo donde se define el blueprint, lo que ayuda a gestionar rutas, importar recursos estáticos y mostrar errores con información precisa. Si no lo pones, puedes tener problemas al registrar el blueprint o al servir archivos estáticos, y la depuración será más difícil. Por convención y buenas prácticas, siempre se incluye `__name__` para asegurar que Flask tenga el contexto correcto del módulo.
+
+**¿__name__ se refiere al archivo donde está la ruta?**
+Sí, `__name__` es una variable especial de Python que representa el nombre del módulo (archivo) donde se está ejecutando el código. Cuando usas `Blueprint('nombre', __name__)`, Flask utiliza ese valor para saber desde qué archivo se está creando el blueprint, lo que ayuda a registrar rutas, importar recursos y mostrar errores correctamente. Así, Flask tiene el contexto exacto del módulo donde está definida la ruta.
+---
+
 **¿Cómo se prueba la conexión a la base de datos y por qué se usa 'SELECT 1'?**
 - En Python: se obtiene la conexión, se crea un cursor y se ejecuta una consulta simple (`SELECT 1`).
 - En JS: se obtiene la conexión y se ejecuta una consulta con `await db.query('SELECT 1')`.

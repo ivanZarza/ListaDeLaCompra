@@ -7,6 +7,11 @@
 - En Flask: `Blueprint('nombre', __name__)`
 - En Express: `const router = express.Router()`
 
+  - ¿Por qué se pone `__name__` en Blueprint y qué significa?
+    - `__name__` es una variable especial en Python que indica el nombre del módulo actual. Al pasarla a Blueprint, Flask puede ubicar correctamente los recursos estáticos y las rutas asociadas a ese módulo. Es una práctica recomendada para modularizar la aplicación y evitar conflictos de nombres.
+  - ¿`__name__` se refiere al archivo donde está la ruta?
+    - Sí, `__name__` representa el nombre del archivo (módulo) donde se define el Blueprint. Esto ayuda a Flask a saber desde qué módulo cargar las rutas y recursos.
+
 ---
 
 **2. ¿Cómo se define una ruta con parámetros en Flask y Express?**

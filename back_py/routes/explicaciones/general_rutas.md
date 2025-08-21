@@ -103,4 +103,12 @@ Diferencia con JS: arrays usan `.push()`, objetos usan punto/corchetes.
 
 Este resumen agrupa las preguntas y respuestas más relevantes sobre rutas en Flask, comparaciones con Express, y conceptos clave para aprender backend en Python.
 
-¿Quieres agregar más preguntas, ejemplos o una sección específica?
+
+---
+
+## Uso de `__name__` en Blueprint (Flask)
+
+  - ¿Por qué se pone `__name__` en Blueprint y qué significa?
+    - `__name__` es una variable especial en Python que indica el nombre del módulo actual. Al pasarla a Blueprint, Flask puede ubicar correctamente los recursos estáticos y las rutas asociadas a ese módulo. Es una práctica recomendada para modularizar la aplicación y evitar conflictos de nombres.
+  - ¿`__name__` se refiere al archivo donde está la ruta?
+    - Sí, `__name__` representa el nombre del archivo (módulo) donde se define el Blueprint. Esto ayuda a Flask a saber desde qué módulo cargar las rutas y recursos.
