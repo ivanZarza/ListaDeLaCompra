@@ -17,7 +17,6 @@ def get_datos_usuario(usuario_id):
         db.close()
 
 def put_datos_usuario(usuario_id, nombre, apellidos, email, contraseña_actual, nueva_contraseña):
-    # Validación de datos
     if not all([usuario_id, nombre, apellidos, email, contraseña_actual, nueva_contraseña]):
         print("Faltan datos obligatorios en la petición")
         return {"error": "Faltan datos obligatorios"}, 400

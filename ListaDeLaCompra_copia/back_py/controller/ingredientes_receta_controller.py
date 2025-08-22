@@ -55,9 +55,10 @@ def get_un_ingrediente_receta(id):
 
 def post_ingrediente_receta(receta_id, ingrediente_id, peso):
     usuario_id = session.get('usuario_id')
+    print
     if not usuario_id:
         return {'error': 'No estás autenticado'}, 401
-    if not receta_id or not ingrediente_id or not peso:
+    if not all([receta_id, ingrediente_id, peso]):
         return {'error': 'Faltan datos obligatorios'}, 400
     sql = "INSERT INTO ingredientes_por_receta (receta_id, ingrediente_id, peso, usuario_id) VALUES (%s, %s, %s, %s)"
     try:

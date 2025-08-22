@@ -7,14 +7,17 @@ from controller.recetas_controller import (
     delete_receta
 )
 recetas_bp = Blueprint('recetas', __name__)
+
 @recetas_bp.route('/usuario/recetas', methods=['GET'])
 def route_get_recetas():
     data, status = get_recetas()
     return jsonify(data), status
+
 @recetas_bp.route('/usuario/recetas/<id>', methods=['GET'])
 def route_get_detalles_receta(id):
     data, status = get_detalles_receta(id)
     return jsonify(data), status
+
 @recetas_bp.route('/usuario/recetas', methods=['POST'])
 def route_post_receta():
     body = request.get_json()

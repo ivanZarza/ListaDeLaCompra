@@ -30,6 +30,7 @@ def agregar_paso_receta():
 def agregar_varios_pasos_receta():
     data = request.get_json()
     return post_varios_pasos_receta(data.get('pasos'))
+
 @pasos_receta_bp.route('/usuario/pasos/<id>', methods=['PUT'])
 def actualizar_paso_receta(id):
     data = request.get_json()
@@ -39,6 +40,7 @@ def actualizar_paso_receta(id):
         data.get('elaboracion'),
         data.get('imagen')
     )
+
 @pasos_receta_bp.route('/usuario/pasos/<id>', methods=['DELETE'])
 def eliminar_paso_receta(id):
     return delete_paso_receta(id)

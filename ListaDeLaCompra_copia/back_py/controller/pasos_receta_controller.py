@@ -94,8 +94,10 @@ def post_varios_pasos_receta(pasos):
 
 def put_paso_receta(id, receta_id, elaboracion, imagen):
     usuario_id = session.get('usuario_id')
+    print(usuario_id)
     if not usuario_id:
         return {'error': 'No estás autenticado'}, 401
+    print(id, receta_id, elaboracion, imagen)
     if not id or not receta_id:
         return {'error': 'Faltan datos obligatorios'}, 400
     sql = "UPDATE pasos_por_receta SET receta_id = %s, elaboracion = %s, imagen = %s WHERE id = %s AND usuario_id = %s"
