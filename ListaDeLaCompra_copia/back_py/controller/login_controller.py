@@ -2,8 +2,8 @@ import bcrypt
 from db.conexion import get_connection
 from flask import session
 
-def post_login(email, contrasena):
-    if not email or not contrasena:
+def post_login(email, contraseña):
+    if not email or not contraseña:
         return {"error": "Faltan datos obligatorios"}, 400
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -14,8 +14,8 @@ def post_login(email, contrasena):
         if len(resultados) == 0:
             return {"error": "El usuario no existe"}, 401
         usuario = resultados[0]
-        if not bcrypt.checkpw(contrasena.encode(), usuario["contrasena"].encode()):
-            return {"error": "Contrasena incorrecta"}, 401
+        if not bcrypt.checkpw(contraseña.encode(), usuario["contraseña"].encode()):
+            return {"error": "Contraseña incorrecta"}, 401
         session["usuario_id"] = usuario["id"]
         session["nombre"] = usuario["nombre"]
         session["apellidos"] = usuario["apellidos"]

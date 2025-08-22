@@ -7,5 +7,5 @@ def registrar_usuario():
     nombre = data.get('nombre')
     apellidos = data.get('apellidos')
     email = data.get('email')
-    contrasena = data.get('contrasena')
-    return post_registro(nombre, apellidos, email, contrasena)
+    contraseña = data.get('contraseña')
+    return post_registro(nombre, apellidos, email, contraseña)

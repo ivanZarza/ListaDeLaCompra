@@ -5,8 +5,8 @@ login_bp = Blueprint('login', __name__)
 def login():
     datos = request.get_json()
     email = datos.get('email')
-    contrasena = datos.get('contrasena')
-    respuesta, status = post_login(email, contrasena)
+    contraseña = datos.get('contraseña')
+    respuesta, status = post_login(email, contraseña)
     if status == 200 and 'usuario' in respuesta:
         session['usuario_id'] = respuesta['usuario']['id']
     return respuesta, status
