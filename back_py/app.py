@@ -24,7 +24,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey')
 
 
-# Configuración de sesiones en servidor (no cookies)
+# Configuración de sesiones en servidor (no cookies) asi los datos de sesión no se almacenan en la cookie 
 app.config['SESSION_TYPE'] = 'filesystem'
 """ Session(app)
 """

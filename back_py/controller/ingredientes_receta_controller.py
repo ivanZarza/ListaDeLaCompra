@@ -66,10 +66,10 @@ def get_un_ingrediente_receta(id):
         db = get_connection()
         cursor = db.cursor(dictionary=True)
         cursor.execute(sql, (id, usuario_id))
-        ingrediente_dict = cursor.fetchone()  # Ya es un diccionario
-        if not ingrediente_dict:
+        ingrediente = cursor.fetchone()  # Ya es un diccionario
+        if not ingrediente:
             return {'error': 'Ingrediente no encontrado o no tienes permiso para verlo'}, 404
-        return ingrediente_dict, 200
+        return ingrediente, 200
     except Exception as e:
         print(e)
         return {'error': 'Error interno del servidor'}, 500
@@ -82,7 +82,7 @@ def post_ingrediente_receta(receta_id, ingrediente_id, peso):
     print(f"Receta ID: {receta_id}, Ingrediente ID: {ingrediente_id}, Peso: {peso}, Usuario ID: {usuario_id}")
     if not usuario_id:
         return {'error': 'No estás autenticado'}, 401
-    if not receta_id or not ingrediente_id or not peso:
+    if not all([receta_id, ingrediente_id, peso]):
         return {'error': 'Faltan datos obligatorios'}, 400
     sql = "INSERT INTO ingredientes_por_receta (receta_id, ingrediente_id, peso, usuario_id) VALUES (%s, %s, %s, %s)"
     try:
@@ -105,6 +105,10 @@ def post_varios_ingredientes_receta(ingredientes):
     if not usuario_id:
         return {'error': 'No estás autenticado'}, 401
     if not isinstance(ingredientes, list) or len(ingredientes) == 0:
+        # Esta línea comprueba dos cosas:
+        # 1. Que 'ingredientes' sea una lista (isinstance(ingredientes, list)).
+        # 2. Que la lista no esté vacía (len(ingredientes) == 0).
+        # Si 'ingredientes' no es una lista o está vacía, devuelve un error porque no se pueden procesar los
         return {'error': 'Faltan datos obligatorios'}, 400
     sql = "INSERT INTO ingredientes_por_receta (receta_id, ingrediente_id, peso, usuario_id) VALUES (%s, %s, %s, %s)"
     # En este controlador se usó get_db() en vez de get_connection() por consistencia con otros controladores.
@@ -138,7 +142,7 @@ def put_ingrediente_receta(id, peso):
     usuario_id = session.get('usuario_id')
     if not usuario_id:
         return {'error': 'No estás autenticado'}, 401
-    if not id or not peso:
+    if not all([id, peso]):
         return {'error': 'Faltan datos obligatorios'}, 400
     sql = "UPDATE ingredientes_por_receta SET peso = %s WHERE id = %s AND usuario_id = %s"
     try:

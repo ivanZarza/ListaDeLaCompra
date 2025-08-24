@@ -6,22 +6,6 @@
 
 ### Sintaxis básica: variables, funciones, condicionales, bucles
 
-**Python:**
-if condicion:
-    # código
-if not condicion:
-    # negación
-
-**JavaScript:**
-if (condicion) {
-  // código
-}
-if (!condicion) {
-  // negación
-}
-
-
----
 
 ### Declaración de variables
 
@@ -93,6 +77,35 @@ while (condicion) {
   // código
   break;
 }
+**Python:**
+if condicion:
+    # código
+if not condicion:
+    # negación
+
+**JavaScript:**
+if (condicion) {
+  // código
+}
+if (!condicion) {
+  // negación
+}
+
+
+---
+
+### Comprobación de tipos: isinstance
+
+**Python:**
+La función `isinstance(variable, tipo)` permite comprobar si una variable es de un tipo concreto.
+Por ejemplo:
+```python
+x = [1, 2, 3]
+if isinstance(x, list):
+    print("x es una lista")
+```
+Puedes usarlo con cualquier tipo: `str`, `dict`, `int`, etc.
+Sirve para validar datos antes de procesarlos y evitar errores por tipos inesperados.
 
 
 ---
@@ -298,6 +311,7 @@ def get_receta(id):
 
 ### Métodos principales del objeto de conexión
 - `cursor(dictionary=True)`: Crea y devuelve un cursor para ejecutar consultas. Si usas `dictionary=True`, los resultados serán diccionarios.
+- `db.start_transaction()`: Inicia una transacción para asegurar que todos los inserts se realicen juntos.
 - `commit()`: Confirma los cambios realizados en la base de datos (INSERT, UPDATE, DELETE).
 - `rollback()`: Revierte los cambios realizados desde el último commit en caso de error.
 - `close()`: Cierra la conexión con la base de datos y libera recursos.
@@ -521,19 +535,87 @@ def get_receta(id):
 - Opciones avanzadas: `use_reloader`, `threaded`, `ssl_context`, etc.
 
 Opciones y métodos de `app.run`:
-- **debug:** Activa el modo debug (recarga automática y errores detallados). Solo para desarrollo.
-- **host:** Dirección IP donde se expone la app. Por defecto es 127.0.0.1 (solo local). Para acceso externo usa '0.0.0.0'.
-- **port:** Puerto donde se ejecuta la app. Por defecto es 5000.
-- **use_reloader:** Si es True, reinicia el servidor al detectar cambios en el código.
-- **threaded:** Si es True, permite manejar varias peticiones simultáneas usando hilos.
-- **processes:** Número de procesos para manejar peticiones (alternativa a threaded).
-- **ssl_context:** Permite activar HTTPS pasando un certificado y clave.
+
+
 
 Métodos principales de `app` (Flask):
-- `app.run(...)`: Inicia el servidor web.
+- `app.run()` es el método que inicia el servidor Flask. Puedes configurarlo con varias opciones:
+
+- **debug**: Si es `True`, activa el modo debug. El servidor se reinicia automáticamente al detectar cambios y muestra errores detallados en el navegador. Útil solo en desarrollo.
+- **host**: IP donde se expone la app. Por defecto es `'127.0.0.1'` (solo accesible localmente). Si usas `'0.0.0.0'`, la app será accesible desde cualquier dispositivo en la red.
+- **port**: Puerto donde se ejecuta la app. Por defecto es `5000`. Puedes cambiarlo si tienes otro servicio en ese puerto.
+- **use_reloader**: Si es `True`, Flask reinicia el servidor automáticamente al detectar cambios en el código fuente.
+- **threaded**: Si es `True`, permite que el servidor maneje varias peticiones simultáneas usando hilos. Recomendado para apps con múltiples usuarios.
+- **processes**: Número de procesos para manejar peticiones. Alternativa a `threaded` para aprovechar varios núcleos.
+- **ssl_context**: Permite activar HTTPS. Debes pasar un certificado y una clave. Ejemplo: `ssl_context=('cert.pem', 'key.pem')`
+
+Ejemplo completo:
+```python
+app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=True, threaded=True)
+```
+
+En producción, se recomienda usar un servidor como Gunicorn o uWSGI en vez de `app.run`.
+
 - `app.route(...)`: Decorador para definir rutas.
+**Opciones principales de `app.route`:**
+- **rule**: La URL que se asocia a la función. Ejemplo: `/recetas`, `/usuario/<int:id>`
+- **methods**: Lista de métodos HTTP permitidos. Por defecto solo `GET`. Ejemplo: `methods=['GET', 'POST']`
+- **endpoint**: Nombre interno para la ruta. Útil para generar URLs con `url_for`. Si no se indica, se usa el nombre de la función.
+- **strict_slashes**: Si es `False`, la ruta acepta o no la barra final (`/`). Por defecto es `True`.
+- **defaults**: Diccionario de valores por defecto para parámetros de la ruta.
 - `app.register_blueprint(...)`: Registra Blueprints (módulos de rutas).
 - `app.config`: Diccionario para configurar la app (variables, claves, etc).
+
+
+---
+
+### Claves principales de configuración en `app.config` (Flask)
+
+**SECRET_KEY**
+- Clave secreta para firmar la cookie de sesión y proteger datos sensibles. Obligatoria para usar sesiones seguras.
+```python
+app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey')
+```
+
+**SESSION_TYPE**
+- Define dónde se almacenan los datos de sesión. Valores comunes: `'filesystem'` (archivos en disco), `'redis'`, `'sqlalchemy'`, etc.
+```python
+app.config['SESSION_TYPE'] = 'filesystem'
+```
+
+**PERMANENT_SESSION_LIFETIME**
+- Duración máxima de la sesión permanente. Se define con un objeto `timedelta`.
+```python
+from datetime import timedelta
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=2)
+```
+
+**SESSION_COOKIE_NAME**
+- Nombre de la cookie que almacena el identificador de sesión. Por defecto es `'session'`.
+```python
+app.config['SESSION_COOKIE_NAME'] = 'mi_cookie_sesion'
+```
+
+**SESSION_COOKIE_SECURE**
+- Si es `True`, la cookie de sesión solo se envía por HTTPS. Mejora la seguridad en producción.
+```python
+app.config['SESSION_COOKIE_SECURE'] = True
+```
+
+**SESSION_COOKIE_HTTPONLY**
+- Si es `True`, la cookie de sesión no es accesible desde JavaScript, solo por el navegador. Protege contra ataques XSS.
+```python
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+```
+
+**SESSION_COOKIE_SAMESITE**
+- Controla el envío de la cookie en peticiones cross-site. Valores posibles: `'Lax'`, `'Strict'`, `'None'`.
+```python
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+```
+
+---
+
 - `app.before_request`: Decorador para ejecutar lógica antes de cada petición.
 - `app.after_request`: Decorador para ejecutar lógica después de cada petición.
 - `app.teardown_appcontext`: Decorador para limpiar recursos al finalizar el contexto.
